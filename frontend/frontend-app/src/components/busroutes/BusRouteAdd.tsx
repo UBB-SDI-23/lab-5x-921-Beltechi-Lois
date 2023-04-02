@@ -4,6 +4,10 @@ import { Link, useNavigate } from "react-router-dom";
 
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import axios from "axios";
+import { GlobalURL } from "../../main";
+
+//import { GlobalURL } from '../main';
+
 
 
 export const BusRouteAdd = () => {
@@ -22,7 +26,9 @@ const navigate = useNavigate();
 	const addBusRoute = async (event: { preventDefault: () => void }) => {
 		event.preventDefault();
 		try {
-			await axios.post(`http://localhost:8080/busroutes`, busroute);
+			//await axios.post(`http://localhost:8080/busroutes`, busroute);
+			await axios.post(`${GlobalURL}busroutes`, busroute);
+
 			navigate("/busroutes");
 		} catch (error) {
 			console.log(error);

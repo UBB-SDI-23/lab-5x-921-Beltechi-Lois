@@ -23,6 +23,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import AddIcon from "@mui/icons-material/Add";
 import { BusRoute } from "../../models/BusRoute";
+import { GlobalURL } from "../../main";
 
 export const BusRouteShowAll = () => {
 	const [loading, setLoading] = useState(false);
@@ -30,7 +31,8 @@ export const BusRouteShowAll = () => {
 
 	useEffect(() => {
 		setLoading(true);
-		fetch("http://localhost:8080/busroutes")
+		//fetch("http://localhost:8080/busroutes")
+		fetch(`${GlobalURL}busroutes`)
 			.then((response) => response.json())
 			.then((data) => {
 				setBusRoutes(data);
