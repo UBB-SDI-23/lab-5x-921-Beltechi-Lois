@@ -7,10 +7,8 @@ export interface Person{
     dateOfBirth: string,
     gender: string,
     phoneNumber: string,
-    
-
     //passengerId: number,  //#statistic...  ???  DTO
     //numBusRoutesTaken: number //#statistic   ???  DTO
 
-    //passenger: Passenger   // A person is a passenger
+    passenger: Passenger   // A person is a passenger
 }

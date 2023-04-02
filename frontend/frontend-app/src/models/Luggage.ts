@@ -9,6 +9,6 @@ export interface Luggage{
     status: string,
     //passenger_Id: number   ???? DTO
     
-    //passenger: Passenger  // only one unique passenger can have this
+    passenger: Passenger  // only one unique passenger can have this
 
 }

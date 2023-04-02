@@ -8,5 +8,5 @@ export interface Passenger{
     dateOfBirth: string,
     gender: string,
     phoneNumber: string
-    //luggage: Luggage[]      // can have many luggages 
+    luggages: Luggage[]      // can have many luggages 
 }

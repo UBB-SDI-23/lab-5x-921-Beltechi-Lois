@@ -2,32 +2,40 @@ import { useState } from "react";
 import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
 import "./App.css";
-import { PassengerShowAll } from "./components/passengers/PassengerShowAll";
+
 import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { AppMenu } from "./components/AppMenu";
+import { AppHome } from "./components/AppHome";
+import { BusRouteShowAll } from "./components/busroutes/BusRouteShowAll";
+import { BusRouteDetails } from "./components/busroutes/BusRouteDetails";
+import { BusRouteDelete } from "./components/busroutes/BusRouteDelete";
+import { BusRouteAdd } from "./components/busroutes/BusRouteAdd";
+import { BusRouteUpdate } from "./components/busroutes/BusRouteUpdate";
+import { BusRouteFilter } from "./components/busroutes/BusRouteFilter";
+
+
 
 function App() {
-  const [count, setCount] = useState(0);
+	return (
+		<React.Fragment>
+			<Router>
+				<AppMenu />
 
-  return (
-    <React.Fragment>
-      <PassengerShowAll />
+				<Routes>
+					<Route path="/" element={<AppHome />} />
+					
+					<Route path="/busroutes" element={<BusRouteShowAll />} />
+					<Route path="/busroutes/:busRouteId/details" element={<BusRouteDetails/>} />
+					<Route path="/busroutes/:busRouteId/delete" element={<BusRouteDelete />} />
+					<Route path="/busroutes/add" element={<BusRouteAdd />} />
+					<Route path="/busroutes/:busRouteId/edit" element={<BusRouteUpdate />} />
+					<Route path="/distance/filterBusRoutes" element={<BusRouteFilter />} />
 
-      <div className="App">
-        <h1>Vite + React</h1>
-        <div className="card">
-          <button onClick={() => setCount((count) => count + 1)}>
-            count is {count}
-          </button>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test HMR
-          </p>
-        </div>
-        <p className="read-the-docs">
-          Click on the Vite and React logos to learn more
-        </p>
-      </div>
-    </React.Fragment>
-  );
+				</Routes>
+			</Router>
+		</React.Fragment>
+	);
 }
 
 export default App;
