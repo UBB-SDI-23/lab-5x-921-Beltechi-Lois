@@ -2,6 +2,7 @@ import { Container, Card, CardContent, IconButton, CardActions, Button } from "@
 import { Link, useNavigate, useParams } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import axios from "axios";
+import { GlobalURL } from "../../main";
 
 
 
@@ -12,7 +13,7 @@ export const BusRouteDelete = () => {
 
 	const handleDelete = async (event: { preventDefault: () => void }) => {
 		event.preventDefault();
-		await axios.delete(`http://localhost:8080/busroutes/${busRouteId}`);
+		await axios.delete(`${GlobalURL}/busroutes/${busRouteId}`);
 		// go to busroutes list
 		navigate("/busroutes");
 	};

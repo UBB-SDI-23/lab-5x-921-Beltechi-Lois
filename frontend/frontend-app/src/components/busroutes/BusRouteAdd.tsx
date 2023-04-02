@@ -6,7 +6,6 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import axios from "axios";
 import { GlobalURL } from "../../main";
 
-//import { GlobalURL } from '../main';
 
 
 
@@ -20,7 +19,6 @@ const navigate = useNavigate();
         departure_hour: "",
         arrival_hour: "",
         distance: "",
-        //people: 1,
 	});
 
 	const addBusRoute = async (event: { preventDefault: () => void }) => {
@@ -86,15 +84,6 @@ const navigate = useNavigate();
 							sx={{ mb: 2 }}
 							onChange={(event) => setBusRoute({ ...busroute, distance: (event.target.value) })}
 						/>
-                        {/*
-                        <TextField
-							id="person"
-							label="Person"
-							variant="outlined"
-							fullWidth
-							sx={{ mb: 2 }}
-							onChange={(event) => setBusRoute({ ...busroute, person: Number(event.target.value) })}
-                        /> */}
                         
 
 						<Button type="submit">Add BusRoute</Button>

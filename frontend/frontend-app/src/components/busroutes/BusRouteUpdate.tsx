@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import axios from "axios";
+import { GlobalURL } from "../../main";
 
 
 export const BusRouteUpdate = () => {
@@ -16,12 +17,11 @@ const navigate = useNavigate();
         departure_hour: "",
         arrival_hour: "",
         distance: "",
-        //people: 1,
     });
 
     useEffect(() => {
 		const fetchBusRoute = async () => {
-			const response = await fetch(`http://localhost:8080/busroutes/${busRouteId}`);
+			const response = await fetch(`${GlobalURL}/busroutes/${busRouteId}`);
 			const busroute = await response.json();
 			setBusRoute(busroute);
             console.log(busroute);
@@ -32,7 +32,7 @@ const navigate = useNavigate();
 	const updateBusRoute = async (event: { preventDefault: () => void }) => {
 		event.preventDefault();
 		try {
-			await axios.put(`http://localhost:8080/busroutes/${busRouteId}`, busroute);
+			await axios.put(`${GlobalURL}/busroutes/${busRouteId}`, busroute);
 			//navigate(`/busroutes/${busRouteId}/`);
 			navigate('/busroutes');
 		} catch (error) {
@@ -91,15 +91,6 @@ const navigate = useNavigate();
 							sx={{ mb: 2 }}
 							onChange={(event) => setBusRoute({ ...busroute, distance: (event.target.value) })}
 						/>
-                        {/*
-                        <TextField
-							id="person"
-							label="Person"
-							variant="outlined"
-							fullWidth
-							sx={{ mb: 2 }}
-							onChange={(event) => setBusRoute({ ...busroute, person: Number(event.target.value) })}
-                        /> */}
                         
 						<Button type="submit">Update BusRoute</Button>
 					</form>

@@ -20,10 +20,11 @@ import {
   import { Link, useParams } from "react-router-dom";
   import AddIcon from "@mui/icons-material/Add";
   import { BusRoute } from "../../models/BusRoute";
+import { GlobalURL } from "../../main";
   
   export const BusRouteFilter = () => {
     const { givenDistance } = useParams<{ givenDistance: string }>();
-    const [distance, setDistance] = useState(givenDistance ?? "50");
+    const [distance, setDistance] = useState(givenDistance ?? "");
     const [loading, setLoading] = useState(true);
     const [busroutes, setBusRoutes] = useState([]);
   
@@ -39,14 +40,14 @@ import {
 
     useEffect(() => {
         if (distance === '') {
-          fetch('http://localhost:8080/busroutes')
+          fetch(`${GlobalURL}/busroutes`)
             .then((res) => res.json())
             .then((data) => {
               setBusRoutes(data);
               setLoading(false);
             });
         } else {
-          fetch(`http://localhost:8080/busroutes/higherThanGivenDistance/${distance}`)
+          fetch(`${GlobalURL}/busroutes/higherThanGivenDistance/${distance}`)
             .then((res) => res.json())
             .then((data) => {
               setBusRoutes(data);

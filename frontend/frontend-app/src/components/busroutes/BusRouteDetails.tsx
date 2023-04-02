@@ -8,6 +8,7 @@ import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { Passenger } from "../../models/Passenger";
 import { BusRoute } from "../../models/BusRoute";
+import { GlobalURL } from "../../main";
 
 export const BusRouteDetails = () => {
 	//const { passengerId } = useParams();
@@ -16,13 +17,10 @@ export const BusRouteDetails = () => {
 
 	useEffect(() => {
 		const fetchBusRoute = async () => {
-			// TODO: use axios instead of fetch
-			// TODO: handle errors
-			// TODO: handle loading state
+		
 			//const response = await fetch("http://localhost:8080/passengers/{passengerId}");
             //const response = await fetch(`http://localhost:8080/passengers/${Long(passengerId)}`);
-            const response = await fetch(`http://localhost:8080/busroutes/${busRouteId}`); //sau pui cu ""
-            
+            const response = await fetch(`${GlobalURL}/busroutes/${busRouteId}`); //sau pui cu ""
 			const busroute = await response.json();
 			setBusRoute(busroute);
             console.log(busroute);
