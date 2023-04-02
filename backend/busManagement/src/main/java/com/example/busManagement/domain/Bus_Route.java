@@ -1,5 +1,6 @@
 package com.example.busManagement.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 
@@ -16,6 +17,7 @@ public class Bus_Route {
     private long id;
 
     @OneToMany(mappedBy = "bus_route",cascade = CascadeType.REMOVE)
+    @JsonIgnore
     Set<Ticket> tickets;
 
 

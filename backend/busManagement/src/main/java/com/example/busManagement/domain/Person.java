@@ -26,6 +26,16 @@ public class Person{
 //    @JoinColumn(name = "passenger_id") // FK
 //    private Passenger passenger;
 
+//    @OneToOne( mappedBy = "person", cascade = CascadeType.ALL,optional = false)//, cascade = CascadeType.ALL)
+//    @JoinColumn(name="person_id",nullable = false)
+//    //@OnDelete(action = OnDeleteAction.CASCADE)
+//    private Passenger passenger;
+
+//    @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+//    //@MapsId
+//    @JoinColumn(name = "passenger_id")
+//    private Passenger passenger;
+
     @OneToOne( mappedBy = "person", cascade = CascadeType.ALL,optional = false)//, cascade = CascadeType.ALL)
     @JoinColumn(name="person_id",nullable = false)
     //@OnDelete(action = OnDeleteAction.CASCADE)

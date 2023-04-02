@@ -1,12 +1,15 @@
 package com.example.busManagement.controller;
 
 import com.example.busManagement.domain.*;
+import com.example.busManagement.domain.DTO.Bus_Route_TicketDTO;
+import com.example.busManagement.domain.DTO.PersonAverageDistanceDTO;
+import com.example.busManagement.domain.DTO.PersonDTOWithId_1_1;
+import com.example.busManagement.domain.DTO.PersonDTO_getId_1_m_Pass_Lug;
 import com.example.busManagement.exception.PersonNotFoundException;
 import com.example.busManagement.repository.IRepositoryPassenger;
 import com.example.busManagement.repository.IRepositoryPerson;
 import com.example.busManagement.repository.IRepositoryTicket;
 import org.modelmapper.ModelMapper;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -14,23 +17,19 @@ import java.util.stream.Collectors;
 
 @RestController
 public
-//@CrossOrigin(origins = "*") //to allow requests from any domain
-//@CrossOrigin(origins = "http://localhost:8080")
 class ControllerPerson {
 
     private final IRepositoryPerson person_repository;
-    private final IRepositoryTicket ticket_repository;
-
     private final IRepositoryPassenger passenger_repository;
 
 
     ControllerPerson(IRepositoryPerson repository, IRepositoryTicket ticket_repository, IRepositoryPassenger passenger_repository) {
         this.person_repository = repository;
-        this.ticket_repository = ticket_repository;
         this.passenger_repository = passenger_repository;
     }
 
-    @GetMapping("/people")  //GETALL Fara Tickets, cu ID Passenger 1:1, No_Of_BusRoutesTaken for each Person
+    //GETALL without Tickets, with ID Passenger 1:1, No_Of_BusRoutesTaken for each Person
+    @GetMapping("/people")
     @CrossOrigin(origins = "*")
     List<PersonDTOWithId_1_1> all() {
         List<Person> people = person_repository.findAll();
@@ -39,7 +38,7 @@ class ControllerPerson {
         for (Person person : people) {
             int count = 0;
             for (Ticket ticket : person.getTickets()) {
-                if(person.getId()==ticket.getPerson().getId()){ // Current Person == appears in current ticket?
+                if(person.getId()==ticket.getPerson().getId()){  // Current Person == appears in current ticket
                     count++;
                 }
             }
@@ -102,15 +101,14 @@ class ControllerPerson {
     }
 
 
-    //  /passengers/{passengerID}/people
-    //  ADD a Person with an existing Passenger ; or ADD an existing Passenger to the Current Person
+    //  ADD a Person with an existing Passenger ;
+    //  or ADD an existing Passenger to the Current Person
     @PostMapping("/people/passenger/{passengerID}")
     Person newPerson(@RequestBody Person newPerson, @PathVariable Long passengerID) {
         Passenger passenger = this.passenger_repository.findById(passengerID).get();
         newPerson.setPassenger(passenger);
         return this.person_repository.save(newPerson);
     }
-
 
 
     @PutMapping("/people/{personID}/passengers/{passengerID}")     //UPDATE
@@ -135,7 +133,8 @@ class ControllerPerson {
     }
 
 
-    @GetMapping("/people/average-distance-of-bus-routes")  // A3 statistic
+    // A3 statistic
+    @GetMapping("/people/average-distance-of-bus-routes")
     @CrossOrigin(origins = "*")
     public List<PersonAverageDistanceDTO> getPeopleOrderedByAverageDistanceOfBusRoutes() {
         List<PersonAverageDistanceDTO> result = new ArrayList<>();

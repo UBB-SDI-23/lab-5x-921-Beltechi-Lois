@@ -1,6 +1,8 @@
 package com.example.busManagement.controller;
 
 import com.example.busManagement.domain.*;
+import com.example.busManagement.domain.DTO.TicketDTO;
+import com.example.busManagement.domain.DTO.TicketDTOWithId;
 import com.example.busManagement.exception.LuggageNotFoundException;
 import com.example.busManagement.repository.IRepositoryBusRoute;
 import com.example.busManagement.repository.IRepositoryPerson;
@@ -24,7 +26,8 @@ class ControllerTicket {
         this.person_repository = person_repository;
     }
 
-    @GetMapping("/tickets")  //GETALL without people & busRoutes, only with ID Person,Route[ 1: Person&Route]
+    //GETALL without people & busRoutes, only with ID Person,Route[ 1: Person&Route]
+    @GetMapping("/tickets")
     @CrossOrigin(origins = "*")
     List<TicketDTOWithId> all() {
         ModelMapper modelMapper= new ModelMapper();
@@ -40,7 +43,8 @@ class ControllerTicket {
                 .collect(Collectors.toList());
     }
 
-    @GetMapping("/tickets/{id}")     //GET BY ID, cu People si BusRoutes
+    //GET BY ID, with People && BusRoutes
+    @GetMapping("/tickets/{id}")
     @CrossOrigin(origins = "*")
     TicketDTO one(@PathVariable Long id) {
 
@@ -55,7 +59,8 @@ class ControllerTicket {
     }
 
 
-    @PostMapping("/ticket/people/{personID}/busroutes/{busrouteID}")   // ADD
+    // Add to a new ticket existing PersonID & BusRouteID
+    @PostMapping("/tickets/people/{personID}/busroutes/{busrouteID}")   // ADD
     Ticket newTicket(@RequestBody Ticket newTicket,@PathVariable Long personID,@PathVariable Long busrouteID)
     {
         Person person=person_repository.findById(personID).get();
@@ -71,9 +76,8 @@ class ControllerTicket {
     }
 
 
-
-
-    @PostMapping("/ticket/{busrouteID}")   // ADD
+    // A4 requirement; Add to an existing [list of tickets] an existing busRoute
+    @PostMapping("/tickets/{busrouteID}")   // ADD
     List<Ticket> newTicketList(@RequestBody List<TicketDTOWithId> TicketList, @PathVariable Long busrouteID)
     {
         // Bus route    Ticket   Person

@@ -1,9 +1,12 @@
 package com.example.busManagement.controller;
 
 import com.example.busManagement.domain.*;
+import com.example.busManagement.domain.DTO.PassengerAverageLugWeightDTO;
+import com.example.busManagement.domain.DTO.PassengerDTO;
 import com.example.busManagement.exception.PassengerNotFoundException;
 import com.example.busManagement.repository.IRepositoryLuggage;
 import com.example.busManagement.repository.IRepositoryPassenger;
+import com.example.busManagement.repository.IRepositoryPerson;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
@@ -22,13 +25,16 @@ class ControllerPassenger {
     private final IRepositoryPassenger passenger_repository;
     private final IRepositoryLuggage luggage_repository;
 
-    ControllerPassenger(IRepositoryPassenger passenger_repository, IRepositoryLuggage luggage_repository) {
+
+
+    ControllerPassenger(IRepositoryPassenger passenger_repository, IRepositoryLuggage luggage_repository, IRepositoryPerson person_repository) {
         this.passenger_repository = passenger_repository;
         this.luggage_repository = luggage_repository;
     }
 
 
-    @GetMapping("/passengers")  //GETALL fara luggages
+    //GETALL without luggages
+    @GetMapping("/passengers")
     @CrossOrigin(origins = "*")
     List<PassengerDTO> all() {
 
@@ -40,23 +46,25 @@ class ControllerPassenger {
 
     }
 
-    @GetMapping("/passengers/{id}")     //GET BY ID, cu LUGGAGES
+    //GET BY ID, with LUGGAGES
+    @GetMapping("/passengers/{id}")
     @CrossOrigin(origins = "*")
-    Passenger one(@PathVariable Long id) {
+    Passenger one(@PathVariable String id) {
 
-        return passenger_repository.findById(id)
-                .orElseThrow(() -> new PassengerNotFoundException(id));
+        Long passengerId = Long.parseLong(id);
+        return passenger_repository.findById(passengerId)
+                .orElseThrow(() -> new PassengerNotFoundException(passengerId));
     }
 
-    // /luggages/{luggageID}/passengers -> /passengers/luggages/{luggageID}
-    // New passenger. Add existing luggages
-    @PostMapping("/passengers/luggages/{luggageID}")   // ADD
+
+    // New passenger. Add existing luggage to it.
+    @PostMapping("/passengers/luggage/{luggageID}")   // ADD
     Passenger newPassenger(@Valid @RequestBody Passenger newPassenger,@PathVariable Long luggageID)
     {
         Luggage luggage = this.luggage_repository.findById(luggageID).get();
         Set<Luggage> luggageList = new HashSet<>();
-        luggageList.add(luggage); // add given luggage ID to LuggageList
-        newPassenger.setLuggages(luggageList); // Add to Passenger the ListofLuggages
+        luggageList.add(luggage);               // add given luggage ID to LuggageList
+        newPassenger.setLuggages(luggageList);  // Add to Passenger the 'ListofLuggages'
 
         luggage.setPassenger(newPassenger);
         return passenger_repository.save(newPassenger);
@@ -84,10 +92,13 @@ class ControllerPassenger {
 
     @DeleteMapping("/passengers/{id}")  //DELETE
     void deletePassenger(@PathVariable Long id) {
+
+
         passenger_repository.deleteById(id);
     }
 
-    @GetMapping("/passengers/average-luggageWeight-of-passenger") // A3 extra statistic
+    // A3 extra statistic
+    @GetMapping("/passengers/average-luggageWeight-of-passenger")
     @CrossOrigin(origins = "*")
     public List<PassengerAverageLugWeightDTO> getPassengersOrderedByAverageLuggageWeight() {
         List<PassengerAverageLugWeightDTO> result = new ArrayList<>();

@@ -4,20 +4,16 @@ import com.example.busManagement.controller.ControllerLuggage;
 import com.example.busManagement.controller.ControllerPassenger;
 import com.example.busManagement.controller.ControllerPerson;
 import com.example.busManagement.domain.*;
+import com.example.busManagement.domain.DTO.PassengerAverageLugWeightDTO;
+import com.example.busManagement.domain.DTO.PersonAverageDistanceDTO;
 import com.example.busManagement.repository.*;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.Before;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
-import org.mockito.MockitoAnnotations;
-import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -37,13 +33,6 @@ import static org.mockito.Mockito.when;
 
 
 import static org.hamcrest.Matchers.hasSize;
-
-import org.springframework.http.MediaType;
-
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-
-import com.fasterxml.jackson.core.type.TypeReference;
 
 
 import static org.mockito.ArgumentMatchers.any;

@@ -1,6 +1,8 @@
 package com.example.busManagement.controller;
 
 import com.example.busManagement.domain.*;
+import com.example.busManagement.domain.DTO.LuggageDTO;
+import com.example.busManagement.domain.DTO.LuggageDTOWithId;
 import com.example.busManagement.exception.LuggageNotFoundException;
 import com.example.busManagement.repository.IRepositoryLuggage;
 import com.example.busManagement.repository.IRepositoryPassenger;
@@ -30,7 +32,8 @@ public class ControllerLuggage {
     }
 
 
-    @GetMapping("/luggages")  //GETALL without passengers, only with ID PASSENGER[ 1: Passenger]
+    //GETALL without passengers, only with ID PASSENGER[ 1: Passenger]
+    @GetMapping("/luggages")
     @CrossOrigin(origins = "*")
     List<LuggageDTOWithId> all() {
 
@@ -52,7 +55,8 @@ public class ControllerLuggage {
         //return repository.findAll().stream().map(m->m.toLuggageDTOWithId()).collect(Collectors.toList());
     }
 
-    @GetMapping("/luggages/{id}")     //GET BY ID, cu passengers
+    //GET BY ID, cu passengers
+    @GetMapping("/luggages/{id}")
     @CrossOrigin(origins = "*")
     LuggageDTO one(@PathVariable Long id) {
         //return repository.findById(id).get().toLuggageDTO();
@@ -65,7 +69,8 @@ public class ControllerLuggage {
         return luggageDTO;
     }
 
-    @GetMapping("/luggages/higherThanGivenWeight/{value}") // A2 FILTER
+    // A2 FILTER
+    @GetMapping("/luggages/higherThanGivenWeight/{value}")
     @CrossOrigin(origins = "*")
     public List<Luggage> higherThan(@PathVariable int value) {
         return luggage_repository.findAll()
@@ -105,10 +110,10 @@ public class ControllerLuggage {
         Luggage luggage = luggage_repository.findById(luggageID).get();
 
         // Remove the luggage from the passenger's list of luggages
-        ///passenger.getLuggages().remove(luggage); // Remove din lista ;; Cascading already does this
+        ///passenger.getLuggages().remove(luggage); // Remove from list ;; Cascading already does this
 
         // Set the Luggage's passenger to null
-        luggage.setPassenger(null);
+        //luggage.setPassenger(null);
 
         this.luggage_repository.deleteById(luggageID);
     }

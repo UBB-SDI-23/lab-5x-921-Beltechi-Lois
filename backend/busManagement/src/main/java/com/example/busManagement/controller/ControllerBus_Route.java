@@ -1,6 +1,9 @@
 package com.example.busManagement.controller;
 
 import com.example.busManagement.domain.*;
+import com.example.busManagement.domain.DTO.BusRouteDTOwithTicketsFK;
+import com.example.busManagement.domain.DTO.Bus_Route_PeopleDTO;
+import com.example.busManagement.domain.DTO.PersonWithTicketDTO;
 import com.example.busManagement.exception.BusRouteNotFoundException;
 
 import com.example.busManagement.repository.IRepositoryBusRoute;
@@ -28,7 +31,8 @@ class ControllerBus_Route {
     }
 
 
-    @GetMapping("/busroutes") //GETALL fara tickets ; no People information ok,No_Of_People_Transported
+    //GETALL fara tickets ; no People information ok,No_Of_People_Transported
+    @GetMapping("/busroutes")
     @CrossOrigin(origins = "*")
     List<Bus_Route_PeopleDTO> all() {
 
@@ -55,14 +59,17 @@ class ControllerBus_Route {
                 .collect(Collectors.toList());
     }
 
-    @GetMapping("/busroutes/{id}") //GET BY ID, fara TICKETS; cu Person & SeatNumber with Date
+    //GET BY ID, fara TICKETS; cu Person & SeatNumber with Date
+    @GetMapping("/busroutes/{id}")
     @CrossOrigin(origins = "*")
-    BusRouteDTOwithTicketsFK one(@PathVariable Long id) {
+    BusRouteDTOwithTicketsFK one(@PathVariable String id) {
+
+        Long busrouteId = Long.parseLong(id);
 
         ModelMapper modelMapper = new ModelMapper();
 
-        Bus_Route busRoute = busroute_repository.findById(id)
-                .orElseThrow(() -> new BusRouteNotFoundException(id));
+        Bus_Route busRoute = busroute_repository.findById(busrouteId)
+                .orElseThrow(() -> new BusRouteNotFoundException(busrouteId));
 
         Set<PersonWithTicketDTO> peopleWithTickets = new HashSet<>();
         Set<Ticket> tickets = busRoute.getTickets();
@@ -87,6 +94,16 @@ class ControllerBus_Route {
         busRouteDTOwithTicketsFK.setPeople(peopleWithTickets);
 
         return busRouteDTOwithTicketsFK;
+    }
+
+    // A2 FILTER
+    @GetMapping("/busroutes/higherThanGivenDistance/{value}")
+    @CrossOrigin(origins = "*")
+    public List<Bus_Route> higherThan(@PathVariable String value) {
+        return busroute_repository.findAll()
+                .stream()
+                .filter(bus_route -> Integer.parseInt(bus_route.getDistance()) > Integer.parseInt(value))
+                .collect(Collectors.toList());
     }
 
     @PostMapping("/busroutes")   // ADD
