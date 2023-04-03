@@ -2,6 +2,7 @@ package com.example.busManagement.controller;
 
 import com.example.busManagement.domain.*;
 import com.example.busManagement.domain.DTO.BusRouteDTOwithTicketsFK;
+import com.example.busManagement.domain.DTO.BusRoutesAveragePeopleDTO;
 import com.example.busManagement.domain.DTO.Bus_Route_PeopleDTO;
 import com.example.busManagement.domain.DTO.PersonWithTicketDTO;
 import com.example.busManagement.exception.BusRouteNotFoundException;
@@ -146,5 +147,69 @@ class ControllerBus_Route {
         });
         return errors;
     }
+
+//    @GetMapping("/busroutes/average-people-transported")
+//    @CrossOrigin(origins = "*")
+//    public List<BusRoutesAveragePeopleDTO> getBusRoutesOrderedByAveragePeopleTransported() {
+//        List<BusRoutesAveragePeopleDTO> result = new ArrayList<>();
+//
+//        List<Bus_Route> busRoutes = busroute_repository.findAll();
+//
+//        for (Bus_Route busRoute : busRoutes) {
+//            int totalPeopleTransported = 0;
+//            int ticketCount = 0;
+//
+//            // Find for current Bus_Route all its Tickets, along with their number of People_Transported
+//            for (Ticket ticket : busRoute.getTickets()) {
+//                if (ticket.getPerson() != null) {
+//                    //totalPeopleTransported += ticket.getPerson();
+//                    totalPeopleTransported += 1;
+//                    ticketCount++;
+//                }
+//            }
+//
+//            if (ticketCount > 0) {
+//                double averagePeopleTransported = totalPeopleTransported / (double) ticketCount;
+//                BusRoutesAveragePeopleDTO dto = new BusRoutesAveragePeopleDTO(
+//                        busRoute.getId(), busRoute.getBus_name(), busRoute.getRoute_type(),averagePeopleTransported);
+//                result.add(dto);
+//            }
+//        }
+//
+//        result.sort(Comparator.comparingDouble(BusRoutesAveragePeopleDTO::getAveragePeopleTransported)
+//                .thenComparingLong(BusRoutesAveragePeopleDTO::getBusRouteId));
+//
+//        return result;
+//    }
+
+    @GetMapping("/busroutes/order-people-transported")
+    @CrossOrigin(origins = "*")
+    public List<BusRoutesAveragePeopleDTO> getBusRoutesOrderedByPeopleTransported() {
+        List<BusRoutesAveragePeopleDTO> result = new ArrayList<>();
+
+        List<Bus_Route> busRoutes = busroute_repository.findAll();
+
+        for (Bus_Route busRoute : busRoutes) {
+            int totalPeopleTransported = 0;
+
+            // Find for current Bus_Route all its Tickets, along with their number of People_Transported
+            for (Ticket ticket : busRoute.getTickets()) {
+                if (ticket.getPerson() != null) {
+                    totalPeopleTransported++;
+                }
+            }
+
+            BusRoutesAveragePeopleDTO dto = new BusRoutesAveragePeopleDTO(
+                    busRoute.getId(), busRoute.getBus_name(), busRoute.getRoute_type(), totalPeopleTransported);
+            result.add(dto);
+        }
+
+        result.sort(Comparator.comparingInt(BusRoutesAveragePeopleDTO::getNoOfPeopleTransported)
+                .reversed());
+
+        return result;
+    }
+
+
 
 }

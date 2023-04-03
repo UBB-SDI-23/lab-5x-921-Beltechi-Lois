@@ -13,6 +13,7 @@ import { BusRouteDelete } from "./components/busroutes/BusRouteDelete";
 import { BusRouteAdd } from "./components/busroutes/BusRouteAdd";
 import { BusRouteUpdate } from "./components/busroutes/BusRouteUpdate";
 import { BusRouteFilter } from "./components/busroutes/BusRouteFilter";
+import { BusRouteStatistic } from "./components/busroutes/BusRouteStatistic";
 
 
 
@@ -31,6 +32,7 @@ function App() {
 					<Route path="/busroutes/add" element={<BusRouteAdd />} />
 					<Route path="/busroutes/:busRouteId/edit" element={<BusRouteUpdate />} />
 					<Route path="/distance/filterBusRoutes" element={<BusRouteFilter />} />
+					<Route path="/statistic/OrderByPeopleOnBusRoutes" element={<BusRouteStatistic />} />
 
 				</Routes>
 			</Router>

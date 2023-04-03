@@ -24,7 +24,7 @@ export const AppMenu = () => {
 						<SchoolIcon />
 					</IconButton>
 					<Typography variant="h6" component="div" sx={{ mr: 5 }}>
-						BusRoutes view
+						BusRoutes management
 					</Typography>
 					<Button
 						variant={path.startsWith("/busroutes") ? "outlined" : "text"}
@@ -43,7 +43,17 @@ export const AppMenu = () => {
 						color="inherit"
 						sx={{ mr: 5 }}
 						startIcon={<Diversity3Icon />}>
-						BusRoutes filtered by the given distance
+						Filter Busroutes
+					</Button>
+
+					<Button
+						variant={path.startsWith("/statistic/OrderByPeopleOnBusRoutes") ? "outlined" : "text"}
+						to="/statistic/OrderByPeopleOnBusRoutes"
+						component={Link}
+						color="inherit"
+						sx={{ mr: 5 }}
+						startIcon={<Diversity3Icon />}>
+						Statistic BusRoutes
 					</Button>
 				</Toolbar>
 			</AppBar>
