@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client'
 import App from './App'
 import './index.css'
 
-export const GlobalURL=`http://13.51.250.171`;
+export const GlobalURL=`http://localhost:8080`;
 
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
