@@ -70,6 +70,7 @@ export const BusRouteUpdate = () => {
               onChange={(event) =>
                 setBusRoute({ ...busroute, bus_name: event.target.value })
               }
+              value={busroute.bus_name}
             />
             <TextField
               id="route_type"
@@ -80,6 +81,7 @@ export const BusRouteUpdate = () => {
               onChange={(event) =>
                 setBusRoute({ ...busroute, route_type: event.target.value })
               }
+              value={busroute.route_type}
             />
 
             <TextField
@@ -91,6 +93,8 @@ export const BusRouteUpdate = () => {
               onChange={(event) =>
                 setBusRoute({ ...busroute, departure_hour: event.target.value })
               }
+              value={busroute.departure_hour}
+
             />
 
             <TextField
@@ -102,6 +106,8 @@ export const BusRouteUpdate = () => {
               onChange={(event) =>
                 setBusRoute({ ...busroute, arrival_hour: event.target.value })
               }
+              value={busroute.arrival_hour}
+
             />
 
             <TextField
@@ -113,6 +119,8 @@ export const BusRouteUpdate = () => {
               onChange={(event) =>
                 setBusRoute({ ...busroute, distance: event.target.value })
               }
+              value={busroute.distance}
+
             />
 
             <Button type="submit">Update BusRoute</Button>
