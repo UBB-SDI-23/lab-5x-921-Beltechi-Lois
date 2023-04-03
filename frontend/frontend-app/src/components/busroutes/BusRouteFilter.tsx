@@ -40,16 +40,16 @@ import { GlobalURL } from "../../main";
 
     useEffect(() => {
         if (distance === '') {
-          //fetch(`${GlobalURL}/busroutes`)
-          fetch(`api/busroutes`)
+          fetch(`${GlobalURL}/busroutes`)
+          //fetch(`api/busroutes`)
             .then((res) => res.json())
             .then((data) => {
               setBusRoutes(data);
               setLoading(false);
             });
         } else {
-          //fetch(`${GlobalURL}/busroutes/higherThanGivenDistance/${distance}`)
-          fetch(`api/busroutes/higherThanGivenDistance/${distance}`)
+          fetch(`${GlobalURL}/busroutes/higherThanGivenDistance/${distance}`)
+          //fetch(`api/busroutes/higherThanGivenDistance/${distance}`)
             .then((res) => res.json())
             .then((data) => {
               setBusRoutes(data);

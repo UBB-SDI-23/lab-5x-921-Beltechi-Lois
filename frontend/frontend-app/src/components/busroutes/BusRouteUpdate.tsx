@@ -21,8 +21,8 @@ const navigate = useNavigate();
 
     useEffect(() => {
 		const fetchBusRoute = async () => {
-			//const response = await fetch(`${GlobalURL}/busroutes/${busRouteId}`);
-			const response = await fetch(`../../api/busroutes/${busRouteId}`);
+			const response = await fetch(`${GlobalURL}/busroutes/${busRouteId}`);
+			//const response = await fetch(`../../api/busroutes/${busRouteId}`);
 			const busroute = await response.json();
 			setBusRoute(busroute);
             console.log(busroute);
@@ -33,8 +33,8 @@ const navigate = useNavigate();
 	const updateBusRoute = async (event: { preventDefault: () => void }) => {
 		event.preventDefault();
 		try {
-			//await axios.put(`${GlobalURL}/busroutes/${busRouteId}`, busroute);
-			await axios.put(`../../api/busroutes/${busRouteId}`, busroute);
+			await axios.put(`${GlobalURL}/busroutes/${busRouteId}`, busroute);
+			//await axios.put(`../../api/busroutes/${busRouteId}`, busroute);
 			//navigate(`/busroutes/${busRouteId}/`);
 			navigate('/busroutes');
 		} catch (error) {

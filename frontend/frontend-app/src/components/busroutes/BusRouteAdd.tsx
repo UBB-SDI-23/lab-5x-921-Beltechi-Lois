@@ -25,8 +25,8 @@ const navigate = useNavigate();
 		event.preventDefault();
 		try {
 			//await axios.post(`http://localhost:8080/busroutes`, busroute);
-			//await axios.post(`${GlobalURL}/busroutes`, busroute);
-			await axios.post(`../api/busroutes`, busroute);
+			await axios.post(`${GlobalURL}/busroutes`, busroute);
+			//await axios.post(`../api/busroutes`, busroute);
 
 			navigate("/busroutes");
 		} catch (error) {
