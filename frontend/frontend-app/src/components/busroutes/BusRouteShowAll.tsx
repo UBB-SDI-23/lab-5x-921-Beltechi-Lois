@@ -33,7 +33,8 @@ export const BusRouteShowAll = () => {
 		setLoading(true);
 		//fetch("http://localhost:8080/busroutes")
 		//fetch(`${GlobalURL}busroutes`)
-		fetch(`${GlobalURL}/busroutes`)
+		//fetch(`${GlobalURL}/busroutes`)
+		fetch(`api/busroutes`)
 			.then((response) => response.json())
 			.then((data) => {
 				setBusRoutes(data);

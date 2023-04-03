@@ -20,7 +20,8 @@ export const BusRouteDetails = () => {
 		
 			//const response = await fetch("http://localhost:8080/passengers/{passengerId}");
             //const response = await fetch(`http://localhost:8080/passengers/${Long(passengerId)}`);
-            const response = await fetch(`${GlobalURL}/busroutes/${busRouteId}`); //sau pui cu ""
+            //const response = await fetch(`${GlobalURL}/busroutes/${busRouteId}`); //sau pui cu ""
+			const response = await fetch(`../api/busroutes/${busRouteId}`);
 			const busroute = await response.json();
 			setBusRoute(busroute);
             console.log(busroute);

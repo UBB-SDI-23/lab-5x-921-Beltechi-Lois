@@ -13,7 +13,8 @@ export const BusRouteDelete = () => {
 
 	const handleDelete = async (event: { preventDefault: () => void }) => {
 		event.preventDefault();
-		await axios.delete(`${GlobalURL}/busroutes/${busRouteId}`);
+		//await axios.delete(`${GlobalURL}/busroutes/${busRouteId}`);
+		await axios.delete(`../../api/busroutes/${busRouteId}`);
 		// go to busroutes list
 		navigate("/busroutes");
 	};
