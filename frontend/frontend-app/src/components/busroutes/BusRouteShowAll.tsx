@@ -44,10 +44,10 @@ export const BusRouteShowAll = () => {
 
   const sortBusRoutes = () => {
     const sortedBusRoutes = [...busroutes].sort((a: BusRoute, b: BusRoute) => {
-      if (a.distance < b.distance) {
+      if (a.bus_name < b.bus_name) {
         return -1;
       }
-      if (a.distance > b.distance) {
+      if (a.bus_name > b.bus_name) {
         return 1;
       }
       return 0;
