@@ -40,7 +40,7 @@ export const BusRouteUpdate = () => {
   const updateBusRoute = async (event: { preventDefault: () => void }) => {
     event.preventDefault();
     try {
-      await axios.put(`${GlobalURL}/busroutes/${busRouteId}`, busroute);
+      await axios.put(`${BACKEND_API_URL}/busroutes/${busRouteId}`, busroute);
       //await axios.put(`../../api/busroutes/${busRouteId}`, busroute);
       //navigate(`/busroutes/${busRouteId}/`);
       navigate("/busroutes");
