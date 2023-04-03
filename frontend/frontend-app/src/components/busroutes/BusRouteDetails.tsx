@@ -9,6 +9,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { Passenger } from "../../models/Passenger";
 import { BusRoute } from "../../models/BusRoute";
 import { GlobalURL } from "../../main";
+import { BACKEND_API_URL } from "../../constants";
 
 export const BusRouteDetails = () => {
 	//const { passengerId } = useParams();
@@ -20,7 +21,8 @@ export const BusRouteDetails = () => {
 		
 			//const response = await fetch("http://localhost:8080/passengers/{passengerId}");
             //const response = await fetch(`http://localhost:8080/passengers/${Long(passengerId)}`);
-            const response = await fetch(`${GlobalURL}/busroutes/${busRouteId}`); //sau pui cu ""
+            //const response = await fetch(`${GlobalURL}/busroutes/${busRouteId}`); //sau pui cu ""
+			const response = await fetch(`${BACKEND_API_URL}/busroutes/${busRouteId}`);
 			//const response = await fetch(`../api/busroutes/${busRouteId}`);
 			const busroute = await response.json();
 			setBusRoute(busroute);

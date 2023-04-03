@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import axios from "axios";
 import { GlobalURL } from "../../main";
+import { BACKEND_API_URL } from "../../constants";
 
 
 
@@ -25,7 +26,9 @@ const navigate = useNavigate();
 		event.preventDefault();
 		try {
 			//await axios.post(`http://localhost:8080/busroutes`, busroute);
-			await axios.post(`${GlobalURL}/busroutes`, busroute);
+			//await axios.post(`${GlobalURL}/busroutes`, busroute);
+			await axios.post(`${BACKEND_API_URL}/busroutes`, busroute);
+
 			//await axios.post(`../api/busroutes`, busroute);
 
 			navigate("/busroutes");

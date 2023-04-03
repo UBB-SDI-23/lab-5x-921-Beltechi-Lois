@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import axios from "axios";
 import { GlobalURL } from "../../main";
+import { BACKEND_API_URL } from "../../constants";
 
 
 
@@ -13,7 +14,10 @@ export const BusRouteDelete = () => {
 
 	const handleDelete = async (event: { preventDefault: () => void }) => {
 		event.preventDefault();
-		await axios.delete(`${GlobalURL}/busroutes/${busRouteId}`);
+		//await axios.delete(`${GlobalURL}/busroutes/${busRouteId}`);
+		await axios.delete(`${BACKEND_API_URL}/busroutes/${busRouteId}`);
+
+		//BACKEND_API_URL
 		//await axios.delete(`../../api/busroutes/${busRouteId}`);
 		// go to busroutes list
 		navigate("/busroutes");

@@ -12,6 +12,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import axios from "axios";
 import { GlobalURL } from "../../main";
+import { BACKEND_API_URL } from "../../constants";
 
 export const BusRouteUpdate = () => {
   const navigate = useNavigate();
@@ -27,7 +28,7 @@ export const BusRouteUpdate = () => {
 
   useEffect(() => {
     const fetchBusRoute = async () => {
-      const response = await fetch(`${GlobalURL}/busroutes/${busRouteId}`);
+      const response = await fetch(`${BACKEND_API_URL}/busroutes/${busRouteId}`);
       //const response = await fetch(`../../api/busroutes/${busRouteId}`);
       const busroute = await response.json();
       setBusRoute(busroute);

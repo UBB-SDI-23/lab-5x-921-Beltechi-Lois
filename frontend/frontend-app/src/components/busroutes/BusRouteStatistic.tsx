@@ -19,6 +19,7 @@ import { GlobalURL } from "../../main";
 import { Link } from "react-router-dom";
 import AddIcon from "@mui/icons-material/Add";
 import { BusRoutePeopleDTO } from "../../models/BusRoutePeopleDTO";
+import { BACKEND_API_URL } from "../../constants";
 
 export const BusRouteStatistic = () => {
     const[loading, setLoading] = useState(true)
@@ -26,7 +27,11 @@ export const BusRouteStatistic = () => {
 
     useEffect(() => {
     //fetch(`${GlobalURL}/busroutes/order-people-transported`)
-    fetch(GlobalURL + "/busroutes/order-people-transported")
+    //fetch(GlobalURL + "/busroutes/order-people-transported")
+    //fetch(BACKEND_API_URL + "/busroutes/order-people-transported")
+    fetch(`${BACKEND_API_URL}/busroutes/order-people-transported`)
+
+
 
         .then(res => res.json())
         .then(data => {setBusRoutes(data); setLoading(false);})

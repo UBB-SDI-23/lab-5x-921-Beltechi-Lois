@@ -24,6 +24,7 @@ import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import AddIcon from "@mui/icons-material/Add";
 import { BusRoute } from "../../models/BusRoute";
 import { GlobalURL } from "../../main";
+import { BACKEND_API_URL } from "../../constants";
 
 export const BusRouteShowAll = () => {
 	const [loading, setLoading] = useState(false);
@@ -33,7 +34,8 @@ export const BusRouteShowAll = () => {
 		setLoading(true);
 		//fetch("http://localhost:8080/busroutes")
 		//fetch(`${GlobalURL}busroutes`)
-		fetch(`${GlobalURL}/busroutes`)
+		//fetch(`${GlobalURL}/busroutes`)
+		fetch(`${BACKEND_API_URL}/busroutes`)
 		//fetch(`api/busroutes`)
 			.then((response) => response.json())
 			.then((data) => {

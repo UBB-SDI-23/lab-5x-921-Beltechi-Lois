@@ -21,6 +21,7 @@ import {
   import AddIcon from "@mui/icons-material/Add";
   import { BusRoute } from "../../models/BusRoute";
 import { GlobalURL } from "../../main";
+import { BACKEND_API_URL } from "../../constants";
   
   export const BusRouteFilter = () => {
     const { givenDistance } = useParams<{ givenDistance: string }>();
@@ -40,7 +41,8 @@ import { GlobalURL } from "../../main";
 
     useEffect(() => {
         if (distance === '') {
-          fetch(`${GlobalURL}/busroutes`)
+          //fetch(`${GlobalURL}/busroutes`)
+          fetch(`${BACKEND_API_URL}/busroutes`)
           //fetch(`api/busroutes`)
             .then((res) => res.json())
             .then((data) => {
@@ -48,7 +50,8 @@ import { GlobalURL } from "../../main";
               setLoading(false);
             });
         } else {
-          fetch(`${GlobalURL}/busroutes/higherThanGivenDistance/${distance}`)
+          //fetch(`${GlobalURL}/busroutes/higherThanGivenDistance/${distance}`)
+          fetch(`${BACKEND_API_URL}/busroutes/higherThanGivenDistance/${distance}`)
           //fetch(`api/busroutes/higherThanGivenDistance/${distance}`)
             .then((res) => res.json())
             .then((data) => {
