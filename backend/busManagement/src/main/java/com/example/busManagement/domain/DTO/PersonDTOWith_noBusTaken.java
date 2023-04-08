@@ -9,13 +9,14 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class PersonDTO {
+public class PersonDTOWith_noBusTaken {
+
     private long id;
     private  String firstName;
     private  String lastName;
     private  String nationality;
     private  String gender;
     private  String phoneNumber;
-
+    private int numBusRoutesTaken;
 
 }

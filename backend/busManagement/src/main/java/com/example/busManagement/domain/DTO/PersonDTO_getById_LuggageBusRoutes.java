@@ -5,11 +5,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class PersonDTO {
+public class PersonDTO_getById_LuggageBusRoutes {
     private long id;
     private  String firstName;
     private  String lastName;
@@ -17,5 +20,8 @@ public class PersonDTO {
     private  String gender;
     private  String phoneNumber;
 
+    private List<LuggageNoPersonDTO> luggages = new ArrayList<>();  // without Person that appears in Luggage !!
+
+    private List<Bus_Route_TicketDTO> busroutes = new ArrayList<>();
 
 }

@@ -5,7 +5,7 @@ import com.example.busManagement.domain.DTO.TicketDTO;
 import com.example.busManagement.domain.DTO.TicketDTOWithId;
 import com.example.busManagement.domain.Person;
 import com.example.busManagement.domain.Ticket;
-import com.example.busManagement.exception.LuggageNotFoundException;
+import com.example.busManagement.exception.TicketNotFoundException;
 import com.example.busManagement.repository.IRepositoryBusRoute;
 import com.example.busManagement.repository.IRepositoryPerson;
 import com.example.busManagement.repository.IRepositoryTicket;
@@ -45,9 +45,7 @@ public class ServiceTicket {
 
     public TicketDTO getByIdTicket(Long id) {
         if (ticket_repository.findById(id).isEmpty())
-            throw new LuggageNotFoundException(id);
-
-        //return repository.findById(id).get().toLuggageDTO();
+            throw new TicketNotFoundException(id);
 
         ModelMapper modelMapper = new ModelMapper();
         TicketDTO ticketDTO = modelMapper.map(ticket_repository.findById(id).get(), TicketDTO.class);
@@ -69,21 +67,16 @@ public class ServiceTicket {
 
     public List<Ticket> addSingleTicket(List<TicketDTOWithId> ticketList, Long busrouteID) {
         // Bus route    Ticket   Person
-        // !!
+
         Bus_Route selectedBusRoute = busRoute_repository.findById(busrouteID).get();
         List<Ticket> finalList= new ArrayList<>();
 
         for(TicketDTOWithId ticketdto : ticketList){
             Ticket tick=new Ticket();
 
-            // alea noi
-            tick.setPurchase_date(ticketdto.getPurchase_date());
+            // the new ones
+            tick.setPayment_method(ticketdto.getPayment_method());
             tick.setSeat_number(ticketdto.getSeat_number());
-
-//            int busRouteID = ticketdto.getBus_routeId();
-//            Long idd = Long.valueOf(busRouteID);
-//            Bus_Route bus=busRoute_repository.findById(idd).get();
-//            tick.setBus_route(bus);
 
             tick.setBus_route(selectedBusRoute);
 
@@ -91,11 +84,6 @@ public class ServiceTicket {
             Long iddddd= Long.valueOf(ticketdto.getPersonId());
             Person selectedPerson=person_repository.findById(iddddd).get();
             tick.setPerson(selectedPerson);
-
-//            int PersonID=ticketdto.getPersonId();
-//            Long iddd=Long.valueOf(PersonID);;
-//            Person person = person_repository.findById(iddd).get();
-//            tick.setPerson(person);
 
             ticket_repository.save(tick);
             finalList.add(tick);
@@ -107,7 +95,7 @@ public class ServiceTicket {
     public Ticket updateTicket(Ticket newTicket, Long id) {
         return ticket_repository.findById(id)
                 .map(Ticket -> {
-                    Ticket.setPurchase_date(newTicket.getPurchase_date());
+                    Ticket.setPayment_method(newTicket.getPayment_method());
                     Ticket.setSeat_number(newTicket.getSeat_number());
                     return ticket_repository.save(Ticket);
                 })

@@ -1,14 +1,11 @@
-import { Passenger } from "./Passenger";
 
 export interface Person{
     id: number,
     firstName: string,
     lastName: string,
-    dateOfBirth: string,
+    nationality: string,
     gender: string,
     phoneNumber: string,
-    //passengerId: number,  //#statistic...  ???  DTO
-    //numBusRoutesTaken: number //#statistic   ???  DTO
+    //numBusRoutesTaken: number
 
-    passenger: Passenger   // A person is a passenger
 }

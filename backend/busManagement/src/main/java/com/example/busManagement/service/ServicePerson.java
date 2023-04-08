@@ -1,15 +1,10 @@
 package com.example.busManagement.service;
 
 import com.example.busManagement.domain.Bus_Route;
-import com.example.busManagement.domain.DTO.Bus_Route_TicketDTO;
-import com.example.busManagement.domain.DTO.PersonAverageDistanceDTO;
-import com.example.busManagement.domain.DTO.PersonDTOWithId_1_1;
-import com.example.busManagement.domain.DTO.PersonDTO_getId_1_m_Pass_Lug;
-import com.example.busManagement.domain.Passenger;
+import com.example.busManagement.domain.DTO.*;
 import com.example.busManagement.domain.Person;
 import com.example.busManagement.domain.Ticket;
 import com.example.busManagement.exception.PersonNotFoundException;
-import com.example.busManagement.repository.IRepositoryPassenger;
 import com.example.busManagement.repository.IRepositoryPerson;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -20,15 +15,13 @@ import java.util.stream.Collectors;
 @Service
 public class ServicePerson {
     private final IRepositoryPerson person_repository;
-    private final IRepositoryPassenger passenger_repository;
 
-    public ServicePerson(IRepositoryPerson person_repository, IRepositoryPassenger passenger_repository) {
+    public ServicePerson(IRepositoryPerson person_repository) {
         this.person_repository = person_repository;
-        this.passenger_repository = passenger_repository;
     }
 
 
-    public List<PersonDTOWithId_1_1> getAllPeople() {
+    public List<PersonDTOWith_noBusTaken> getAllPeople() {
         List<Person> people = person_repository.findAll();
         Map<Long, Integer> personToBusRoutesMap = new HashMap<>();
 
@@ -43,19 +36,19 @@ public class ServicePerson {
         }
 
         ModelMapper modelMapper = new ModelMapper();
-        modelMapper.typeMap(Person.class, PersonDTOWithId_1_1.class)
-                .addMapping(person -> person.getPassenger().getId(), PersonDTOWithId_1_1::setPassengerId);
 
         return people.stream()
                 .map(person -> {
-                    PersonDTOWithId_1_1 dto = modelMapper.map(person, PersonDTOWithId_1_1.class);
+                    PersonDTOWith_noBusTaken dto = modelMapper.map(person, PersonDTOWith_noBusTaken.class);
                     dto.setNumBusRoutesTaken(personToBusRoutesMap.get(person.getId()));
                     return dto;
                 })
                 .collect(Collectors.toList());
     }
 
-    public PersonDTO_getId_1_m_Pass_Lug getByIdPerson(Long id) {
+
+    // Luggage + Tickets[NO  of busroutes]
+    public PersonDTO_getById_LuggageBusRoutes getByIdPerson(Long id) {
         Optional<Person> personOptional = person_repository.findById(id);
 
         if (personOptional.isEmpty()) {
@@ -64,8 +57,9 @@ public class ServicePerson {
 
         Person person = personOptional.get();
 
-        Set<Bus_Route_TicketDTO> busRoutes = new HashSet<>();
-        Set<Ticket> tickets = person.getTickets();
+
+        List<Bus_Route_TicketDTO> busRoutes = new ArrayList<>();
+        List<Ticket> tickets = person.getTickets();
 
         if (tickets != null) {
             for (Ticket ticket : tickets) {
@@ -78,42 +72,48 @@ public class ServicePerson {
                     busRoute.setArrival_hour(ticket.getBus_route().getArrival_hour());
                     busRoute.setDistance(ticket.getBus_route().getDistance());
                     busRoute.setSeatNumber(ticket.getSeat_number());
-                    busRoute.setDate(ticket.getPurchase_date());
+                    busRoute.setPurchase_method(ticket.getPayment_method());
                     busRoutes.add(busRoute);
                 }
             }
         }
 
         ModelMapper modelMapper = new ModelMapper();
-        modelMapper.typeMap(Person.class, PersonDTO_getId_1_m_Pass_Lug.class)
-                .addMappings(mapper -> mapper.skip(PersonDTO_getId_1_m_Pass_Lug::setBusroutes));
-        // other mappings...
 
-        PersonDTO_getId_1_m_Pass_Lug personDTOid = modelMapper.map(person, PersonDTO_getId_1_m_Pass_Lug.class);
+        // Retrieve the luggage information for the person and map it to a list of LuggageNoPersonDTO objects
+        List<LuggageNoPersonDTO> luggageList = person.getLuggage().stream()
+                .map(luggage -> modelMapper.map(luggage, LuggageNoPersonDTO.class))
+                .collect(Collectors.toList());
+
+        modelMapper.typeMap(Person.class, PersonDTO_getById_LuggageBusRoutes.class)
+                .addMappings(mapper -> {
+                    mapper.skip(PersonDTO_getById_LuggageBusRoutes::setBusroutes);
+                    mapper.skip(PersonDTO_getById_LuggageBusRoutes::setLuggages);
+                });
+
+        PersonDTO_getById_LuggageBusRoutes personDTOid = modelMapper.map(person, PersonDTO_getById_LuggageBusRoutes.class);
         personDTOid.setBusroutes(busRoutes);
+        personDTOid.setLuggages(luggageList);
         return personDTOid;
     }
 
-    public Person addPerson(Person newPerson, Long passengerID) {
-        Passenger passenger = this.passenger_repository.findById(passengerID).get();
-        newPerson.setPassenger(passenger);
+    public Person addPerson(Person newPerson) {
         return this.person_repository.save(newPerson);
     }
 
-    public Person updatePerson(Person person, Long personID, Long passengerID) {
-        Passenger passenger = passenger_repository.findById(passengerID).get();
+    public Person updatePerson(Person person, Long personID) {
 
         Person foundPerson = this.person_repository.findById(personID).get();
         foundPerson.setFirstName(person.getFirstName());
         foundPerson.setLastName(person.getLastName());
-        foundPerson.setDateOfBirth(person.getDateOfBirth());
+        foundPerson.setNationality(person.getNationality());
         foundPerson.setGender(person.getGender());
         foundPerson.setPhoneNumber(person.getPhoneNumber());
-        foundPerson.setPassenger(passenger);
         return this.person_repository.save(foundPerson);
     }
 
     public void deletePerson(Long id) {
+
         person_repository.deleteById(id);
     }
 

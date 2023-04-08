@@ -3,22 +3,15 @@ package com.example.busManagement.controller;
 import com.example.busManagement.domain.*;
 import com.example.busManagement.domain.DTO.LuggageDTO;
 import com.example.busManagement.domain.DTO.LuggageDTOWithId;
-import com.example.busManagement.exception.LuggageNotFoundException;
-import com.example.busManagement.repository.IRepositoryLuggage;
-import com.example.busManagement.repository.IRepositoryPassenger;
 import com.example.busManagement.service.ServiceLuggage;
 import jakarta.validation.Valid;
-import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.HashMap;
 import java.util.List;
-
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @RestController
 public class ControllerLuggage {
@@ -26,13 +19,12 @@ public class ControllerLuggage {
     private final ServiceLuggage ControllerLuggage;
 
 
-
     public ControllerLuggage(ServiceLuggage controllerLuggage) {
         ControllerLuggage = controllerLuggage;
     }
 
 
-    //GETALL without passengers, only with ID PASSENGER[ 1: Passenger]
+    //GETALL without people, only with PeopleID
     @GetMapping("/luggages")
     @CrossOrigin(origins = "*")
     List<LuggageDTOWithId> all() {
@@ -47,33 +39,26 @@ public class ControllerLuggage {
         return ControllerLuggage.getByIdLuggage(id);
     }
 
-    // A2 FILTER
-    @GetMapping("/luggages/higherThanGivenWeight/{value}")
-    @CrossOrigin(origins = "*")
-    public List<Luggage> higherThan(@PathVariable int value) {
-        return ControllerLuggage.higherThanWeight(value);
-    }
 
-    @PostMapping("/luggages")   // ADD
-    Luggage newLuggage(@Valid @RequestBody Luggage newLuggage) {
+    @PostMapping("/luggages/people/{personID}")   // ADD existing PersonID to a new Luggage
+    Luggage newLuggage(@Valid @RequestBody Luggage newLuggage,@PathVariable Long personID) {
 
-        return ControllerLuggage.addNewLuggage(newLuggage);
+        return ControllerLuggage.addNewLuggage(newLuggage,personID);
     }
 
 
-    @PutMapping("/luggages/{luggageID}/passengers/{passengerID}")     //UPDATE
-    Luggage replaceLuggage(@Valid @RequestBody Luggage luggage, @PathVariable Long luggageID, @PathVariable Long passengerID)
+    @PutMapping("/luggages/{luggageID}/people/{personID}")     //UPDATE
+    Luggage replaceLuggage(@Valid @RequestBody Luggage luggage, @PathVariable Long luggageID, @PathVariable Long personID)
     {
-        return ControllerLuggage.updateLuggage(luggage,luggageID,passengerID);
+        return ControllerLuggage.updateLuggage(luggage,luggageID,personID);
     }
 
 
-    // Luggage ID 3 deleted;   Passenger -> delete this luggage here too;  Delete then luggage;
-    // /passengers/{passengerID}/luggages/{luggageID} -> /luggages/{luggageID}/passengers/{passengerID}
-    @DeleteMapping("/luggages/{luggageID}/passengers/{passengerID}")  //DELETE
-    void deleteLuggage(@PathVariable Long luggageID, @PathVariable Long passengerID)
+    // Luggage ID 3 deleted;   Person -> delete this luggage here too (cascading will do this);
+    @DeleteMapping("/luggages/{luggageID}")  //DELETE
+    void deleteLuggage(@PathVariable Long luggageID)
     {
-        ControllerLuggage.deleteLuggage(luggageID,passengerID);
+        ControllerLuggage.deleteLuggage(luggageID);
     }
 
 

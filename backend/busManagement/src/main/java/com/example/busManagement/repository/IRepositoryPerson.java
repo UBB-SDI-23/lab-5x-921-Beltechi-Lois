@@ -11,7 +11,6 @@ import java.util.Optional;
 @Repository
 @Component
 public interface IRepositoryPerson extends JpaRepository<Person, Long> {
-    List<Person> findByIdGreaterThan(Long id);
 
 }
 

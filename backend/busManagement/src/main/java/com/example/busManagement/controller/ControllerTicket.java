@@ -3,17 +3,9 @@ package com.example.busManagement.controller;
 import com.example.busManagement.domain.*;
 import com.example.busManagement.domain.DTO.TicketDTO;
 import com.example.busManagement.domain.DTO.TicketDTOWithId;
-import com.example.busManagement.exception.LuggageNotFoundException;
-import com.example.busManagement.repository.IRepositoryBusRoute;
-import com.example.busManagement.repository.IRepositoryPerson;
-import com.example.busManagement.repository.IRepositoryTicket;
 import com.example.busManagement.service.ServiceTicket;
-import org.modelmapper.ModelMapper;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 class ControllerTicket {

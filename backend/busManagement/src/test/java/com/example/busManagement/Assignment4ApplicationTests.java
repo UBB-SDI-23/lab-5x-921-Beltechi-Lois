@@ -1,14 +1,15 @@
 package com.example.busManagement;
 
-import com.example.busManagement.controller.ControllerLuggage;
-import com.example.busManagement.controller.ControllerPassenger;
+import com.example.busManagement.controller.ControllerBus_Route;
+
 import com.example.busManagement.controller.ControllerPerson;
 import com.example.busManagement.domain.*;
-import com.example.busManagement.domain.DTO.PassengerAverageLugWeightDTO;
 import com.example.busManagement.domain.DTO.PersonAverageDistanceDTO;
 import com.example.busManagement.repository.*;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -28,16 +29,6 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.when;
 
 
-/////
-
-
-
-import static org.hamcrest.Matchers.hasSize;
-
-
-import static org.mockito.ArgumentMatchers.any;
-
-//import org.mockito.BDDMockito.given;
 
 
 @RunWith(SpringRunner.class)
@@ -46,45 +37,19 @@ class Assignment4ApplicationTests {
 
     @Autowired
     private ControllerPerson person_controller;
-
     @Autowired
-    private ControllerPassenger passenger_controller;
-
-
-    @Autowired
-    private ControllerLuggage luggage_controller;
-
-    @MockBean
-    private IRepositoryPassenger passenger_repository;
-
+    private ControllerBus_Route busroute_controller;
     @MockBean
     private IRepositoryPerson person_repository;
-
     @MockBean
     private IRepositoryBusRoute bus_repository;
-
-    @MockBean
-    private IRepositoryLuggage luggage_repository;
-
     @MockBean
     private IRepositoryTicket ticket_repository;
-
-
-
     @Autowired
     private WebApplicationContext webApplicationContext;
 
-    private MockMvc mockMvc;
 
-
-
-
-
-//    @Before
-//    public void setUp() {
-//        MockitoAnnotations.initMocks(this);
-//        this.mockMvc=MockMvcBuilders.standaloneSetup(person_controller).build();
-//    }
+    // Test endpoints
 
     @Test
     public void testPeopleUrl() throws Exception {
@@ -93,11 +58,46 @@ class Assignment4ApplicationTests {
                 .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
+    @Test
+    public void testgetPeopleOrderedByAverageDistanceOfBusRoutes() throws Exception {
+        MockMvc mockMvc = MockMvcBuilders.standaloneSetup(person_controller).build();
+        mockMvc.perform(MockMvcRequestBuilders.get("/people/average-distance-of-bus-routes"))
+                .andExpect(MockMvcResultMatchers.status().isOk());
+    }
+
+    @Test
+    public void testHigherThanEndpoint() throws Exception {
+        MockMvc mockMvc = MockMvcBuilders.standaloneSetup(busroute_controller).build();
+        mockMvc.perform(MockMvcRequestBuilders.get("/busroutes/higherThanGivenDistance/25"))
+                .andExpect(MockMvcResultMatchers.status().isOk());
+    }
+
+
+
+    @Test
+    public void testPeopleUrlWithId() throws Exception {
+
+        Person person = new Person(1,  new ArrayList<Ticket>(), new ArrayList<Luggage>(),"John",
+                "Doe", "Romanian", "Male", "1234567890");
+
+        person_controller.newPerson(person);
+
+        Mockito.when(person_repository.findById(1L)).thenReturn(Optional.of(person));
+
+        MockMvc mockMvc = MockMvcBuilders.standaloneSetup(person_controller).build();
+        mockMvc.perform(MockMvcRequestBuilders.get("/people/1"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                //.andExpect(MockMvcResultMatchers.jsonPath("$.name", MockMvcResultMatchers.equalTo("John")));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.firstName", Matchers.is("John")));
+
+    }
 
 
     @Test
     void testPersonModelName() {
-        Person person = new Person(1, "Alina", "Bucur", "1999/10/10", "Female", "0743591501");
+        Person person = new Person(1,null,null,"Alina", "Bucur",
+                "Romania", "Female", "0743591501");
+
         given(person_repository.findById(1L)).willReturn(Optional.of(person));
 
         Optional<Person> personFound = person_repository.findById(1L);
@@ -122,10 +122,10 @@ class Assignment4ApplicationTests {
         List<Person> people_end = person_repository.findAll();
         assertEquals(2, people_end.size());
 
+        System.out.println("Test GetALL passed");
+
+
     }
-
-
-
 
 
 
@@ -137,7 +137,7 @@ class Assignment4ApplicationTests {
         person1.setId(1L);
         person1.setFirstName("Alina");
         person1.setLastName("Bucur");
-        person1.setDateOfBirth("1999/03/22");
+        person1.setNationality("Romanian");
         person1.setGender("Female");
         person1.setPhoneNumber("0723460325");
 
@@ -145,7 +145,7 @@ class Assignment4ApplicationTests {
         Person person2 = new Person();
         person2.setFirstName("Dragos");
         person2.setLastName("Popa");
-        person2.setDateOfBirth("2000/10/10");
+        person2.setNationality("Romanian");
         person2.setGender("Male");
         person2.setPhoneNumber("0743591501");
         person2.setId(2L);
@@ -174,7 +174,7 @@ class Assignment4ApplicationTests {
         ticket1.setPerson(person1);
         ticket1.setBus_route(bus1);
         ticket1.setSeat_number("123");
-        ticket1.setPurchase_date("2020/10/10");
+        ticket1.setPayment_method("Card");
 
 
         Ticket ticket2= new Ticket();
@@ -182,22 +182,22 @@ class Assignment4ApplicationTests {
         ticket1.setPerson(person2);
         ticket1.setBus_route(bus2);
         ticket1.setSeat_number("124");
-        ticket1.setPurchase_date("2020/12/12");
+        ticket1.setPayment_method("Cash");
 
 
-        Set<Ticket> tickets_of_person1= new HashSet<>();
+        List<Ticket> tickets_of_person1= new ArrayList<>();
         tickets_of_person1.add(ticket1);
         person1.setTickets(tickets_of_person1);
 
-        Set<Ticket> tickets_of_person2= new HashSet<>();
+        List<Ticket> tickets_of_person2= new ArrayList<>();
         tickets_of_person2.add(ticket2);
         person2.setTickets(tickets_of_person2);
 
-        Set<Ticket> tickets_of_busroute1= new HashSet<>();
+        List<Ticket> tickets_of_busroute1= new ArrayList<>();
         tickets_of_busroute1.add(ticket1);
         bus1.setTickets(tickets_of_busroute1);
 
-        Set<Ticket> tickets_of_busroute2= new HashSet<>();
+        List<Ticket> tickets_of_busroute2= new ArrayList<>();
         tickets_of_busroute2.add(ticket2);
         bus2.setTickets(tickets_of_busroute2);
 
@@ -220,135 +220,35 @@ class Assignment4ApplicationTests {
 
 
     @Test
-    void getPassengerLuggageStatisticTest() {
+    void getFilteredBusRoutesA2() {
+        Bus_Route bus1 = Bus_Route.builder()
+                .id(1L)
+                .bus_name("BZN1")
+                .route_type("RDR3")
+                .departure_hour("18:00")
+                .arrival_hour("19:00")
+                .distance("300")
+                .build();
 
-        Passenger passenger1=new Passenger();
-        passenger1.setId(1L);
-        passenger1.setTimesTravelled("12");
-        passenger1.setGender("Female");
-        passenger1.setDateOfBirth("1999/10/10");
-        passenger1.setLastName("Bucur");
-        passenger1.setFirstName("Alina");
-        passenger1.setPhoneNumber("0723460325");
-        //passenger1.setLuggages();
+        bus1.setTickets(null);
 
-        Passenger passenger2=new Passenger();
-        passenger2.setId(2L);
-        passenger2.setTimesTravelled("123");
-        passenger2.setGender("Male");
-        passenger2.setDateOfBirth("2000/12/12");
-        passenger2.setLastName("Popa");
-        passenger2.setFirstName("Dragos");
-        passenger2.setPhoneNumber("0743591501");
-        //passenger1.setLuggages();
+        Bus_Route bus2 = Bus_Route.builder()
+                .id(1L)
+                .bus_name("BZN2")
+                .route_type("RDR4")
+                .departure_hour("19:00")
+                .arrival_hour("20:00")
+                .distance("200")
+                .build();
+       bus2.setTickets(null);
 
-        Luggage luggage1=new Luggage();
-        luggage1.setId(1L);
-        luggage1.setBusNumber(123);
-        luggage1.setWeight(3);
-        luggage1.setOwner("Alina Bucur");
-        luggage1.setSize(5);
-        luggage1.setStatus("unchecked");
-        //luggage1.setPassenger();
-
-        Luggage luggage2=new Luggage();
-        luggage2.setId(2L);
-        luggage2.setBusNumber(124);
-        luggage2.setWeight(5);
-        luggage2.setOwner("Dragos Popa");
-        luggage2.setSize(7);
-        luggage2.setStatus("checked");
-        //luggage2.setPassenger();
-
-        luggage1.setPassenger(passenger1);
-        luggage2.setPassenger(passenger2);
-
-        Set<Luggage> luggages_of_passenger1=new HashSet<>();
-        luggages_of_passenger1.add(luggage1);
-        passenger1.setLuggages(luggages_of_passenger1);
-
-        Set<Luggage> luggages_of_passenger2=new HashSet<>();
-        luggages_of_passenger2.add(luggage2);
-        passenger2.setLuggages(luggages_of_passenger2);
-
-        passenger_repository.save(passenger1);
-        passenger_repository.save(passenger2);
-        luggage_repository.save(luggage1);
-        luggage_repository.save(luggage2);
-
-        when(passenger_controller.getPassengersOrderedByAverageLuggageWeight()).thenReturn(
-                Stream.of(new PassengerAverageLugWeightDTO(
-                                1,"Alina","Bucur",3),
-                        new PassengerAverageLugWeightDTO(
-                                2,"Dragos","Popa",5)
-                ).collect(Collectors.toList()));
-        System.out.println("Test 2 passed");
-    }
+        bus_repository.save(bus1);
+        bus_repository.save(bus2);
 
 
-
-    @Test
-    void getFilteredLuggagesA2() {
-
-        Passenger passenger1=new Passenger();
-        passenger1.setId(1L);
-        passenger1.setTimesTravelled("12");
-        passenger1.setGender("Female");
-        passenger1.setDateOfBirth("1999/10/10");
-        passenger1.setLastName("Bucur");
-        passenger1.setFirstName("Alina");
-        passenger1.setPhoneNumber("0723460325");
-        //passenger1.setLuggages();
-
-        Passenger passenger2=new Passenger();
-        passenger2.setId(2L);
-        passenger2.setTimesTravelled("123");
-        passenger2.setGender("Male");
-        passenger2.setDateOfBirth("2000/12/12");
-        passenger2.setLastName("Popa");
-        passenger2.setFirstName("Dragos");
-        passenger2.setPhoneNumber("0743591501");
-        //passenger1.setLuggages();
-
-        Luggage luggage1=new Luggage();
-        luggage1.setId(1L);
-        luggage1.setBusNumber(123);
-        luggage1.setWeight(3);
-        luggage1.setOwner("Alina Bucur");
-        luggage1.setSize(5);
-        luggage1.setStatus("unchecked");
-        //luggage1.setPassenger();
-
-        Luggage luggage2=new Luggage();
-        luggage2.setId(2L);
-        luggage2.setBusNumber(124);
-        luggage2.setWeight(5);
-        luggage2.setOwner("Dragos Popa");
-        luggage2.setSize(7);
-        luggage2.setStatus("checked");
-        //luggage2.setPassenger();
-
-        luggage1.setPassenger(passenger1);
-        luggage2.setPassenger(passenger2);
-
-        Set<Luggage> luggages_of_passenger1=new HashSet<>();
-        luggages_of_passenger1.add(luggage1);
-        passenger1.setLuggages(luggages_of_passenger1);
-
-        Set<Luggage> luggages_of_passenger2=new HashSet<>();
-        luggages_of_passenger2.add(luggage2);
-        passenger2.setLuggages(luggages_of_passenger2);
-
-        passenger_repository.save(passenger1);
-        passenger_repository.save(passenger2);
-        luggage_repository.save(luggage1);
-        luggage_repository.save(luggage2);
-
-
-
-        when(luggage_controller.higherThan(3)).thenReturn(
-                Stream.of(new Luggage(1,passenger2,124,5,7,
-                        "Dragos Popa","checked")
+        when(busroute_controller.higherThan("200")).thenReturn(
+                Stream.of(new Bus_Route(1,null,"BZN1","RDR3","18:00",
+                        "19:00","300")
 
                 ).collect(Collectors.toList()));
         System.out.println("Test 2 passed");

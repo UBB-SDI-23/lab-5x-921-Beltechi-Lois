@@ -4,24 +4,17 @@ import com.example.busManagement.domain.*;
 import com.example.busManagement.domain.DTO.BusRouteDTOwithTicketsFK;
 import com.example.busManagement.domain.DTO.BusRoutesAveragePeopleDTO;
 import com.example.busManagement.domain.DTO.Bus_Route_PeopleDTO;
-import com.example.busManagement.domain.DTO.PersonWithTicketDTO;
-import com.example.busManagement.exception.BusRouteNotFoundException;
-
-import com.example.busManagement.repository.IRepositoryBusRoute;
-
-import com.example.busManagement.repository.IRepositoryTicket;
 import com.example.busManagement.service.ServiceBus_Route;
 import jakarta.validation.Valid;
-import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.*;
-import java.util.stream.Collectors;
+
 
 @RestController
+public
 class ControllerBus_Route {
 
     private final ServiceBus_Route busRouteService;
@@ -56,6 +49,13 @@ class ControllerBus_Route {
         return busRouteService.filterHigherThanGivenDistance(value);
     }
 
+    // A3 statistic
+    @GetMapping("/busroutes/order-people-transported")
+    @CrossOrigin(origins = "*")
+    public List<BusRoutesAveragePeopleDTO> getBusRoutesOrderedByPeopleTransported() {
+        return busRouteService.getBusRoutesOrderedByPeopleTransported();
+    }
+
     @PostMapping("/busroutes")   // ADD
     Bus_Route newBusRoute(@Valid @RequestBody Bus_Route newBusRoute) {
         return busRouteService.addBusRoute(newBusRoute);
@@ -85,14 +85,6 @@ class ControllerBus_Route {
         });
         return errors;
     }
-
-
-    @GetMapping("/busroutes/order-people-transported")
-    @CrossOrigin(origins = "*")
-    public List<BusRoutesAveragePeopleDTO> getBusRoutesOrderedByPeopleTransported() {
-        return busRouteService.getBusRoutesOrderedByPeopleTransported();
-    }
-
 
 
 }

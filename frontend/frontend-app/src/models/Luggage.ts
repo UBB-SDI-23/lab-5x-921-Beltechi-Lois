@@ -1,14 +1,11 @@
-import { Passenger } from "./Passenger";
 
 export interface Luggage{
     id: number,
-    busNumber: number,
+    type: string,
     weight: number,
-    size: number,
-    owner: string,
+    color: string,
+    priority: string,
     status: string,
-    //passenger_Id: number   ???? DTO
-    
-    passenger: Passenger  // only one unique passenger can have this
+    //personId: number
 
 }

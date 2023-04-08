@@ -32,6 +32,7 @@ public class ServiceBus_Route {
         List<Bus_Route> busroutes = busroute_repository.findAll();
         List<Ticket> tickets = ticket_repository.findAll();
 
+        //addd
         Map<Long, Integer> busRouteToNumberOfPeopleMap = new HashMap<>();
         for (Ticket ticket : tickets) {
             Long busRouteId = ticket.getBus_route().getId();
@@ -60,8 +61,8 @@ public class ServiceBus_Route {
         Bus_Route busRoute = busroute_repository.findById(busrouteId)
                 .orElseThrow(() -> new BusRouteNotFoundException(busrouteId));
 
-        Set<PersonWithTicketDTO> peopleWithTickets = new HashSet<>();
-        Set<Ticket> tickets = busRoute.getTickets();
+        List<PersonWithTicketDTO> peopleWithTickets = new ArrayList<>();
+        List<Ticket> tickets = busRoute.getTickets();
 
         if (tickets != null) {
             for (Ticket ticket : tickets) {
@@ -70,11 +71,11 @@ public class ServiceBus_Route {
                 personWithTicketDTO.setId(person.getId());
                 personWithTicketDTO.setFirstName(person.getFirstName());
                 personWithTicketDTO.setLastName(person.getLastName());
-                personWithTicketDTO.setDateOfBirth(person.getDateOfBirth());
+                personWithTicketDTO.setNationality(person.getNationality());
                 personWithTicketDTO.setGender(person.getGender());
                 personWithTicketDTO.setPhoneNumber(person.getPhoneNumber());
                 personWithTicketDTO.setSeatNumber(ticket.getSeat_number());
-                personWithTicketDTO.setDate(ticket.getPurchase_date());
+                personWithTicketDTO.setPayment_method(ticket.getPayment_method());
                 peopleWithTickets.add(personWithTicketDTO);
             }
         }

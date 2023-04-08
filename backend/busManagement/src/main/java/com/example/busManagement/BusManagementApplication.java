@@ -20,6 +20,18 @@ public class BusManagementApplication {
 		SpringApplication.run(BusManagementApplication.class, args);
 	}
 
+
+	@Bean
+	public Docket api() {
+		return new Docket(DocumentationType.SWAGGER_2)
+				.select()
+				.apis(RequestHandlerSelectors.basePackage("com.example.busManagement"))
+				.paths(PathSelectors.ant("/api/*"))
+				.build();
+	}
+
+
+
 //	@Configuration
 //	@EnableSwagger2
 //	@Import(SpringDataRestConfiguration.class)
@@ -34,15 +46,6 @@ public class BusManagementApplication {
 //		}
 //	}
 
-
-	@Bean
-	public Docket api() {
-		return new Docket(DocumentationType.SWAGGER_2)
-				.select()
-				.apis(RequestHandlerSelectors.basePackage("com.example.busManagement"))
-				.paths(PathSelectors.ant("/api/*"))
-				.build();
-	}
 
 //	@Configuration
 //	@EnableSwagger2
