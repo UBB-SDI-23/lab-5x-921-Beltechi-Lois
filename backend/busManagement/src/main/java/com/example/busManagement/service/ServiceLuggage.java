@@ -2,6 +2,7 @@ package com.example.busManagement.service;
 
 import com.example.busManagement.domain.DTO.LuggageDTO;
 import com.example.busManagement.domain.DTO.LuggageDTOWithId;
+import com.example.busManagement.domain.DTO.LuggagePersonDTO;
 import com.example.busManagement.domain.Luggage;
 import com.example.busManagement.domain.Person;
 import com.example.busManagement.exception.LuggageNotFoundException;
@@ -10,7 +11,10 @@ import com.example.busManagement.repository.IRepositoryPerson;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -69,5 +73,43 @@ public class ServiceLuggage {
 
     public void deleteLuggage(Long luggageID) {
         this.luggage_repository.deleteById(luggageID);
+    }
+
+
+    // counting the number of blue luggage per person
+    public List<LuggagePersonDTO> getBlueLuggageCount() {
+        List<Luggage> blueLuggageList = luggage_repository.findAll(); // not yet blue
+
+//        List<Luggage> blueLuggageList=new ArrayList<>();
+//
+//        for(Luggage element: LuggageList){
+//            if(element.getColor()== "Blue"){
+//                blueLuggageList.add(element);
+//            }
+//
+//        }
+
+        Map<Long, Integer> luggageCountMap = new HashMap<>();
+        for (Luggage luggage : blueLuggageList) {
+            if(luggage.getColor()=="Blue") {
+                long personId = luggage.getPerson().getId();
+                luggageCountMap.put(personId, luggageCountMap.getOrDefault(personId, 0) + 1);
+            }
+        }
+
+        List<LuggagePersonDTO> result = new ArrayList<>();
+        ModelMapper modelMapper = new ModelMapper();
+        for (Map.Entry<Long, Integer> entry : luggageCountMap.entrySet()) {
+            Person person = person_repository.findById(entry.getKey()).orElse(null);
+            if (person != null) {
+                LuggagePersonDTO dto = modelMapper.map(person, LuggagePersonDTO.class);
+                dto.setLuggage_id(blueLuggageList.get(0).getId());
+                dto.setColor("Blue");
+                dto.setNoOfPeople(entry.getValue());
+                result.add(dto);
+            }
+        }
+
+        return result;
     }
 }

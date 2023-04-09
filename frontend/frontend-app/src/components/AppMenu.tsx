@@ -66,20 +66,7 @@ export const AppMenu = () => {
             Filter Busroutes
           </Button>
 
-          <Button
-            variant={
-              path.startsWith("/statistic/OrderByPeopleOnBusRoutes")
-                ? "outlined"
-                : "text"
-            }
-            to="/statistic/OrderByPeopleOnBusRoutes"
-            component={Link}
-            color="inherit"
-            sx={{ mr: 5 }}
-            startIcon={<BarChartIcon />}
-          >
-            Statistic BusRoutes
-          </Button>
+  
         </Toolbar>
       </AppBar>
     </Box>

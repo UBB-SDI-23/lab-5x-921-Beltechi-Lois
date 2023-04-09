@@ -246,7 +246,7 @@ class Assignment4ApplicationTests {
         bus_repository.save(bus2);
 
 
-        when(busroute_controller.higherThan("200")).thenReturn(
+        when(busroute_controller.higherThan("200",0,2)).thenReturn(
                 Stream.of(new Bus_Route(1,null,"BZN1","RDR3","18:00",
                         "19:00","300")
 

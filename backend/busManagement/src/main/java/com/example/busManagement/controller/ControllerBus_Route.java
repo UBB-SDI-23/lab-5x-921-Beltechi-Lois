@@ -3,9 +3,11 @@ package com.example.busManagement.controller;
 import com.example.busManagement.domain.*;
 import com.example.busManagement.domain.DTO.BusRouteDTOwithTicketsFK;
 import com.example.busManagement.domain.DTO.BusRoutesAveragePeopleDTO;
+import com.example.busManagement.domain.DTO.Bus_RouteDTO;
 import com.example.busManagement.domain.DTO.Bus_Route_PeopleDTO;
 import com.example.busManagement.service.ServiceBus_Route;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -27,11 +29,11 @@ class ControllerBus_Route {
 
 
     //GETALL fara tickets ; no People information ok,No_Of_People_Transported
-    @GetMapping("/busroutes")
+    @GetMapping("/busroutes/page/{page}/size/{size}")
     @CrossOrigin(origins = "*")
-    List<Bus_Route_PeopleDTO> all() {
-
-        return busRouteService.getAllbusroutes();
+    List<Bus_RouteDTO> all(@PathVariable int page, @PathVariable int size) {
+        PageRequest pr = PageRequest.of(page,size);
+        return busRouteService.getAllbusroutes(pr);
     }
 
     //GET BY ID, fara TICKETS; cu Person & SeatNumber with Date
@@ -42,19 +44,20 @@ class ControllerBus_Route {
         return busRouteService.getByIdbusroutes(id);
     }
 
-    // A2 FILTER
-    @GetMapping("/busroutes/higherThanGivenDistance/{value}")
+    @GetMapping("/busroutes/count")
     @CrossOrigin(origins = "*")
-    public List<Bus_Route> higherThan(@PathVariable String value) {
-        return busRouteService.filterHigherThanGivenDistance(value);
+    long count() {
+        return busRouteService.getCount();
     }
 
-    // A3 statistic
-    @GetMapping("/busroutes/order-people-transported")
+    // A2 FILTER
+    @GetMapping("/busroutes/higherThanGivenDistance/{value}/page/{page}/size/{size}")
     @CrossOrigin(origins = "*")
-    public List<BusRoutesAveragePeopleDTO> getBusRoutesOrderedByPeopleTransported() {
-        return busRouteService.getBusRoutesOrderedByPeopleTransported();
+    public List<Bus_Route> higherThan(@PathVariable String value,@PathVariable int page, @PathVariable int size) {
+        PageRequest pr = PageRequest.of(page,size);
+        return busRouteService.filterHigherThanGivenDistance(value,pr);
     }
+
 
     @PostMapping("/busroutes")   // ADD
     Bus_Route newBusRoute(@Valid @RequestBody Bus_Route newBusRoute) {

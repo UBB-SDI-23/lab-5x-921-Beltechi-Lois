@@ -3,8 +3,10 @@ package com.example.busManagement.controller;
 import com.example.busManagement.domain.*;
 import com.example.busManagement.domain.DTO.LuggageDTO;
 import com.example.busManagement.domain.DTO.LuggageDTOWithId;
+import com.example.busManagement.domain.DTO.LuggagePersonDTO;
 import com.example.busManagement.service.ServiceLuggage;
 import jakarta.validation.Valid;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -75,6 +77,9 @@ public class ControllerLuggage {
         return errors;
     }
 
-
+    @GetMapping("/luggage/color/blue/people-count")
+    public List<LuggagePersonDTO> getBlueLuggageCount() {
+            return ControllerLuggage.getBlueLuggageCount();
+    }
 
 }

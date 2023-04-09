@@ -1,16 +1,15 @@
 package com.example.busManagement.service;
 
 import com.example.busManagement.domain.Bus_Route;
-import com.example.busManagement.domain.DTO.BusRouteDTOwithTicketsFK;
-import com.example.busManagement.domain.DTO.BusRoutesAveragePeopleDTO;
-import com.example.busManagement.domain.DTO.Bus_Route_PeopleDTO;
-import com.example.busManagement.domain.DTO.PersonWithTicketDTO;
+import com.example.busManagement.domain.DTO.*;
 import com.example.busManagement.domain.Person;
 import com.example.busManagement.domain.Ticket;
 import com.example.busManagement.exception.BusRouteNotFoundException;
 import com.example.busManagement.repository.IRepositoryBusRoute;
 import com.example.busManagement.repository.IRepositoryTicket;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.*;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -27,31 +26,84 @@ public class ServiceBus_Route {
         this.ticket_repository = ticket_repository;
     }
 
-
-    public List<Bus_Route_PeopleDTO> getAllbusroutes() {
-        List<Bus_Route> busroutes = busroute_repository.findAll();
-        List<Ticket> tickets = ticket_repository.findAll();
-
-        //addd
-        Map<Long, Integer> busRouteToNumberOfPeopleMap = new HashMap<>();
-        for (Ticket ticket : tickets) {
-            Long busRouteId = ticket.getBus_route().getId();
-            Integer numberOfPeople = busRouteToNumberOfPeopleMap.getOrDefault(busRouteId, 0);
-            busRouteToNumberOfPeopleMap.put(busRouteId, numberOfPeople + 1);
-        }
-
+    public List<Bus_RouteDTO> getAllbusroutes(PageRequest pr) {
+        //Pageable pageable = PageRequest.of(0, 50);
+        //Page<Bus_Route> busRoutePage = busroute_repository.findAll(pageable);
+        Page<Bus_Route> busRoutePage = busroute_repository.findAll(pr);
         ModelMapper modelMapper = new ModelMapper();
-        List<Bus_Route> busRoutes = busroute_repository.findAll();
-
-        return busRoutes.stream()
-                .map(busRoute -> {
-                    Bus_Route_PeopleDTO dto = modelMapper.map(busRoute, Bus_Route_PeopleDTO.class);
-                    Integer numberOfPeople = busRouteToNumberOfPeopleMap.getOrDefault(busRoute.getId(), 0);
-                    dto.setNo_Of_People_Transported(numberOfPeople);
-                    return dto;
-                })
+        return busRoutePage.stream()
+                .map(busRoute -> modelMapper.map(busRoute, Bus_RouteDTO.class))
                 .collect(Collectors.toList());
     }
+
+
+//    public List<Bus_Route_PeopleDTO> getAllbusroutes() {
+//        //List<Bus_Route> busroutes = busroute_repository.findAll();
+//        List<Ticket> tickets = ticket_repository.findAll();
+//
+//        //addd
+//        Map<Long, Integer> busRouteToNumberOfPeopleMap = new HashMap<>();
+//        for (Ticket ticket : tickets) {
+//            Long busRouteId = ticket.getBus_route().getId();
+//            Integer numberOfPeople = busRouteToNumberOfPeopleMap.getOrDefault(busRouteId, 0);
+//            busRouteToNumberOfPeopleMap.put(busRouteId, numberOfPeople + 1);
+//        }
+//
+//        ModelMapper modelMapper = new ModelMapper();
+//        List<Bus_Route> busRoutes = busroute_repository.findAll();
+//
+//        return busRoutes.stream()
+//                .map(busRoute -> {
+//                    Bus_Route_PeopleDTO dto = modelMapper.map(busRoute, Bus_Route_PeopleDTO.class);
+//                    Integer numberOfPeople = busRouteToNumberOfPeopleMap.getOrDefault(busRoute.getId(), 0);
+//                    dto.setNo_Of_People_Transported(numberOfPeople);
+//                    return dto;
+//                })
+//                .collect(Collectors.toList());
+//    }
+
+//    public List<Bus_Route_PeopleDTO> getAllbusroutes() {
+//        int page = 0;
+//        int size = 50;
+//
+//        Pageable pageable = PageRequest.of(page, size);
+//        Page<Ticket> ticketPage;
+//        List<Ticket> tickets = new ArrayList<>();
+//        Map<Long, Integer> busRouteToNumberOfPeopleMap = new HashMap<>();
+//        do {
+//            ticketPage = ticket_repository.findAll(pageable);
+//            tickets.addAll(ticketPage.getContent());
+//            for (Ticket ticket : ticketPage.getContent()) {
+//                Long busRouteId = ticket.getBus_route().getId();
+//                Integer numberOfPeople = busRouteToNumberOfPeopleMap.getOrDefault(busRouteId, 0);
+//                busRouteToNumberOfPeopleMap.put(busRouteId, numberOfPeople + 1);
+//            }
+//            pageable = ticketPage.nextPageable();
+//        } while (ticketPage.hasNext());
+//
+//        ModelMapper modelMapper = new ModelMapper();
+//        Page<Bus_Route> busRoutePage;
+//        List<Bus_Route_PeopleDTO> busRouteDTOs = new ArrayList<>();
+//        Set<Long> countedBusRouteIds = new HashSet<>();
+//        do {
+//            busRoutePage = busroute_repository.findAll(pageable);
+//            List<Bus_Route> busRoutes = busRoutePage.getContent();
+//            for (Bus_Route busRoute : busRoutes) {
+//                if (countedBusRouteIds.contains(busRoute.getId())) {
+//                    continue; // Skip bus routes that have already been counted
+//                }
+//                Integer numberOfPeople = busRouteToNumberOfPeopleMap.getOrDefault(busRoute.getId(), 0);
+//                Bus_Route_PeopleDTO dto = modelMapper.map(busRoute, Bus_Route_PeopleDTO.class);
+//                dto.setNo_Of_People_Transported(numberOfPeople);
+//                busRouteDTOs.add(dto);
+//                countedBusRouteIds.add(busRoute.getId());
+//            }
+//            pageable = busRoutePage.nextPageable();
+//        } while (busRoutePage.hasNext());
+//
+//        return busRouteDTOs;
+//    }
+
 
     public BusRouteDTOwithTicketsFK getByIdbusroutes(String id) {
         Long busrouteId = Long.parseLong(id);
@@ -86,9 +138,14 @@ public class ServiceBus_Route {
         return busRouteDTOwithTicketsFK;
     }
 
-    public List<Bus_Route> filterHigherThanGivenDistance(String value) {
+    public List<Bus_Route> filterHigherThanGivenDistance(String value, PageRequest pr) {
+        //Pageable pageable = PageRequest.of(0, 50);
+//        return busroute_repository.findAll(pageable)
+//                .stream()
+//                .filter(bus_route -> Integer.parseInt(bus_route.getDistance()) > Integer.parseInt(value))
+//                .collect(Collectors.toList());
 
-        return busroute_repository.findAll()
+        return busroute_repository.findAll(pr)
                 .stream()
                 .filter(bus_route -> Integer.parseInt(bus_route.getDistance()) > Integer.parseInt(value))
                 .collect(Collectors.toList());
@@ -118,29 +175,15 @@ public class ServiceBus_Route {
         busroute_repository.deleteById(id);
     }
 
-    public List<BusRoutesAveragePeopleDTO> getBusRoutesOrderedByPeopleTransported() {
-        List<BusRoutesAveragePeopleDTO> result = new ArrayList<>();
 
-        List<Bus_Route> busRoutes = busroute_repository.findAll();
+    // INITIAL
 
-        for (Bus_Route busRoute : busRoutes) {
-            int totalPeopleTransported = 0;
+    public long getCount() {
+        return busroute_repository.count();
 
-            // Find for current Bus_Route all its Tickets, along with their number of People_Transported
-            for (Ticket ticket : busRoute.getTickets()) {
-                if (ticket.getPerson() != null) {
-                    totalPeopleTransported++;
-                }
-            }
-
-            BusRoutesAveragePeopleDTO dto = new BusRoutesAveragePeopleDTO(
-                    busRoute.getId(), busRoute.getBus_name(), busRoute.getRoute_type(), totalPeopleTransported);
-            result.add(dto);
-        }
-
-        result.sort(Comparator.comparingInt(BusRoutesAveragePeopleDTO::getNoOfPeopleTransported)
-                .reversed());
-
-        return result;
     }
+
+
+
+
 }
