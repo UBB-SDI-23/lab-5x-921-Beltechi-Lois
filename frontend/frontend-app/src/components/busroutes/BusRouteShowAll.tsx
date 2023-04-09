@@ -191,7 +191,7 @@ export const BusRouteShowAll = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {busroutes.map((busroute, index) => (
+              {Array.isArray(busroutes) && busroutes.map((busroute, index) => (
                 <TableRow key={busroute.id}>
                   <TableCell component="th" scope="row">
                     {index + 1}
