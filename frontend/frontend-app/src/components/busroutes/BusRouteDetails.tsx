@@ -48,9 +48,11 @@ export const BusRouteDetails = () => {
 							<li key={person.id}> {person.lastName} {person.gender} {person.phoneNumber}</li>
 						))}
 					</ul>
-					) : (
-						<p>No people transported yet</p>
-					)}
+					) : 
+					// (
+					// 	<p>No people transported yet</p>
+					// )
+					null}
 
 
 				</CardContent>

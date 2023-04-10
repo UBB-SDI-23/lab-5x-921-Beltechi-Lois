@@ -45,31 +45,46 @@ export const BusRouteShowAll = () => {
   const [busroutes, setBusRoutes] = useState<BusRoute[]>([]);
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(100);   //Items per Page
-  const [totalBusRoutes, setTotalBusRoutes] = useState(0);
+  //const [totalBusRoutes, setTotalBusRoutes] = useState(0);
 
+  const fetchBusRoutes = useCallback(async (page: number, pageSize: number) => {
+    try {
+      //const countResponse = await axios.get(`${BACKEND_API_URL}/busroutes/count`);
+      //const count = countResponse.data;
+  
+      const dataResponse = await axios.get(`${BACKEND_API_URL}/busroutes/page/${page}/size/${pageSize}`);
+      const data = dataResponse.data;
+  
+      //setTotalBusRoutes(count);
+      setBusRoutes(data);
+      setLoading(false);
+    } catch (error) {
+      console.error(error);
+      setLoading(false);
+    }
+  }, []);
+  
   useEffect(() => {
     console.log('useEffect triggered with page:', page, 'and pageSize:', pageSize);
     setLoading(true);
+    fetchBusRoutes(page, pageSize);
+  }, [fetchBusRoutes, page, pageSize]);
+
+
+
+  const [totalBusRoutes, setTotalBusRoutes] = useState(0);
+  useEffect(() => {
+    axios
+      .get(`${BACKEND_API_URL}/busroutes/count`)
+      .then((response) => {
+        setTotalBusRoutes(response.data);
+      })
+      .catch((error) => console.log(error));
+  }, []);
+
+
   
-    const fetchBusRoutes = async () => {
-      try {
-        const countResponse = await axios.get(`${BACKEND_API_URL}/busroutes/count`);
-        const count = countResponse.data;
   
-        const dataResponse = await axios.get(`${BACKEND_API_URL}/busroutes/page/${page}/size/${pageSize}`);
-        const data = dataResponse.data;
-  
-        setTotalBusRoutes(count);
-        setBusRoutes(data);
-        setLoading(false);
-      } catch (error) {
-        console.error(error);
-        setLoading(false);
-      }
-    };
-  
-    fetchBusRoutes();
-  }, [page, pageSize]);
   
   
   
