@@ -44,18 +44,13 @@ export const BusRouteShowAll = () => {
   const [loading, setLoading] = useState(false);
   const [busroutes, setBusRoutes] = useState<BusRoute[]>([]);
   const [page, setPage] = useState(0);
-  const [pageSize, setPageSize] = useState(100);   //Items per Page
-  //const [totalBusRoutes, setTotalBusRoutes] = useState(0);
+  const [pageSize, setPageSize] = useState(15);   //Items per Page
 
   const fetchBusRoutes = useCallback(async (page: number, pageSize: number) => {
-    try {
-      //const countResponse = await axios.get(`${BACKEND_API_URL}/busroutes/count`);
-      //const count = countResponse.data;
-  
+    try {  
       const dataResponse = await axios.get(`${BACKEND_API_URL}/busroutes/page/${page}/size/${pageSize}`);
       const data = dataResponse.data;
   
-      //setTotalBusRoutes(count);
       setBusRoutes(data);
       setLoading(false);
     } catch (error) {
@@ -83,22 +78,6 @@ export const BusRouteShowAll = () => {
   }, []);
 
 
-  
-  
-  
-  
-  
-  
-  // useEffect(() => {
-  //   setLoading(true);
-
-  //   fetch(`${BACKEND_API_URL}/busroutes/page/${page}/size/${pageSize}`)
-  //     .then((response) => response.json())
-  //     .then((data) => {
-  //       setBusRoutes(data);
-  //       setLoading(false);
-  //     });
-  // }, [page, pageSize]);
 
   const sortBusRoutes = () => {
     const sortedBusRoutes = [...busroutes].sort((a: BusRoute, b: BusRoute) => {
@@ -117,28 +96,38 @@ export const BusRouteShowAll = () => {
   const totalPages = Math.max(1, Math.ceil(totalBusRoutes / pageSize));
 
 
-  const handlePreviousPage = () => {
-    // if (page > 0) {
-    //   setPage(page - 1);
-    // }
-
-    setPage(Math.max(page - 1, 0));
-
-  };
-
-  const handleNextPage = () => {
-    //setPage(page + 1);
-    setPage(Math.min(page + 1, totalPages - 1));
-
-  };
-
-  const handleJump = (jump: number) => {
-    setPage(Math.max(Math.min(page + jump, totalPages - 1), 0));
-  };
-
 
   const startIdx = page * pageSize;
   const endIdx = Math.min(startIdx + pageSize, totalBusRoutes);
+
+
+  const getPageNumbers = () => {
+    const pageNumbers = [];
+    let i;
+    for (i = 0; i < totalPages; i++) {
+      if (
+        i === 0 ||
+        i === totalPages - 1 ||
+        (i >= page - 5 && i <= page + 5) ||
+        i < 5 ||
+        i > totalPages - 6
+      ) {
+        pageNumbers.push(i);
+      } else if (
+        pageNumbers[pageNumbers.length - 1] !== "..." &&
+        (i < page - 5 || i > page + 5)
+      ) {
+        pageNumbers.push("...");
+      }
+    }
+    return pageNumbers;
+  };
+
+  const handlePageClick = (pageNumber: number) => {
+    setPage(pageNumber);
+  };
+
+
 
   return (
     <Container>
@@ -161,33 +150,27 @@ export const BusRouteShowAll = () => {
           <Button sx={{ color: "black", mr: 3 }} onClick={sortBusRoutes}>
             Sort BusRoutes
           </Button>
-          <Button
-            sx={{ color: "black" }}
-            disabled={page === 0}
-            onClick={handlePreviousPage}
-          >
-            Previous Page
-          </Button>
-          <Button sx={{ color: "black" }} onClick={handleNextPage}>
-            Next Page
-          </Button>
 
-          <Box mx={2} display="flex" alignItems="center">
-            Page {page + 1} of {Math.ceil(totalBusRoutes / pageSize)}
-          </Box>
+
+          {/* <div>
+            Showing {startIdx + 1}-{endIdx} of {totalBusRoutes} busroutes
+          </div> */}
 
           <div>
-          <p>
-          Showing {startIdx + 1}-{endIdx} of {totalBusRoutes} busroutes
-        </p>
-          <button onClick={() => handleJump(-100)}>Back 100</button>
-          <button onClick={() => handleJump(-10)}>Back 10</button>
-          <button onClick={() => handleJump(10)}>Forward 10</button>
-          <button onClick={() => handleJump(100)}>Forward 100</button>
-        </div>
-
-        
-
+            {getPageNumbers().map((pageNumber, index) => (
+              <button
+                key={index}
+                className={`btn me-2 ${
+                  pageNumber === page ? "btn-primary" : "btn-secondary"
+                }`}
+                onClick={() => handlePageClick(Number(pageNumber))}
+                disabled={pageNumber === "..." || pageNumber === page}
+              >
+                {pageNumber === "..." ? "..." : typeof pageNumber === "number" ? pageNumber + 1 : ""}
+              </button>
+            ))}
+          </div>
+          
         </div>
       )}
 
@@ -202,6 +185,7 @@ export const BusRouteShowAll = () => {
                 <TableCell align="right">departure_hour</TableCell>
                 <TableCell align="center">arrival_hour</TableCell>
                 <TableCell align="center">distance</TableCell>
+                <TableCell align="center">noOfTickets</TableCell>
                 <TableCell align="center">Options</TableCell>
               </TableRow>
             </TableHead>
@@ -224,6 +208,8 @@ export const BusRouteShowAll = () => {
                   <TableCell align="right">{busroute.departure_hour}</TableCell>
                   <TableCell align="right">{busroute.arrival_hour}</TableCell>
                   <TableCell align="center">{busroute.distance}</TableCell>
+                  <TableCell align="center">{busroute.noOfTicketsOfBusRouteId}</TableCell>
+
 
                   <TableCell align="right">
                     <IconButton
@@ -261,16 +247,6 @@ export const BusRouteShowAll = () => {
         </TableContainer>
       )}
 
-      <Button
-        sx={{ color: "black" }}
-        disabled={page === 0}
-        onClick={handlePreviousPage}
-      >
-        Previous Page
-      </Button>
-      <Button sx={{ color: "black" }} onClick={handleNextPage}>
-        Next Page
-      </Button>
     </Container>
   );
 };

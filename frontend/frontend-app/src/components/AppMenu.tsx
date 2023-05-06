@@ -44,6 +44,7 @@ export const AppMenu = () => {
           <Typography variant="h6" component="div" sx={{ mr: 5 }}>
             BusRoutes Management
           </Typography>
+
           <Button
             variant={path.startsWith("/busroutes") ? "outlined" : "text"}
             to="/busroutes"
@@ -65,6 +66,59 @@ export const AppMenu = () => {
           >
             Filter Busroutes
           </Button>
+
+
+          <Button
+						variant={path.startsWith("/people") ? "outlined" : "text"}
+						to="/people"
+						component={Link}
+						color="inherit"
+						sx={{ mr: 5 }}
+						startIcon={<ListAltIcon />}>
+						People
+					</Button>
+
+
+          <Button
+						variant={path.startsWith("/people/statistic/PeopleAverageLuggageWeight") ? "outlined" : "text"}
+						to="/people/statistic/PeopleAverageLuggageWeight"
+						component={Link}
+						color="inherit"
+						sx={{ mr: 5 }}
+						startIcon={<BarChartIcon />}>
+						People Statistic
+					</Button>
+
+          <Button
+						variant={path.startsWith("/tickets") ? "outlined" : "text"}
+						to="/tickets"
+						component={Link}
+						color="inherit"
+						sx={{ mr: 5 }}
+						startIcon={<ListAltIcon />}>
+						Tickets
+					</Button>
+
+          <Button
+            variant={path.startsWith("/luggages") ? "outlined" : "text"}
+            to="/luggages"
+            component={Link}
+            color="inherit"
+            sx={{ mr: 5 }}
+            startIcon={<ListAltIcon />}
+          >
+            Luggages
+          </Button>
+
+          <Button
+						variant={path.startsWith("/luggages/statistic/american-nationality") ? "outlined" : "text"}
+						to="/luggages/statistic/american-nationality"
+						component={Link}
+						color="inherit"
+						sx={{ mr: 5 }}
+						startIcon={<BarChartIcon />}>
+						Luggage Statistic
+					</Button>
 
   
         </Toolbar>

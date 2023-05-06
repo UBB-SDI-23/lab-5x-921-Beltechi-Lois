@@ -1,3 +1,4 @@
+import { Luggage } from "./Luggage"
 
 export interface Person{
     id: number,
@@ -6,6 +7,9 @@ export interface Person{
     nationality: string,
     gender: string,
     phoneNumber: string,
-    //numBusRoutesTaken: number
+    noOfLuggages: number // DTO
+    luggages?: Luggage[]  // luggage used until now....
+
+
 
 }

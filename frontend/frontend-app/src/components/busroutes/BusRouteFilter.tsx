@@ -31,13 +31,15 @@ export const BusRouteFilter = () => {
   const [loading, setLoading] = useState(true);
   const [busroutes, setBusRoutes] = useState([]);
   const [page, setPage] = useState(0);
+  const [size, setSize] = useState(15);
+
   const [totalBusRoutes, setTotalBusRoutes] = useState(0);
   const [numItems, setNumItems] = useState(0);
 
 
   const fetchBusRoutes = useCallback(async () => {
     try {
-      const url = `${BACKEND_API_URL}/busroutes/higherThanGivenDistance/${distance}/page/${page}/size/100`;
+      const url = `${BACKEND_API_URL}/busroutes/higherThanGivenDistance/${distance}/page/${page}/size/${size}`;
       const response = await axios.get(url);
       const data = response.data;
       setBusRoutes(data);
@@ -58,11 +60,11 @@ export const BusRouteFilter = () => {
   const pageSize = 100;
 
   const handlePreviousPage = () => {
-    // if (page > 0) {
-    //   setPage(page - 1);
-    // }
+    if (page > 0) {
+      setPage(page - 1);
+    }
 
-    setPage(Math.max(page - 1, 0));
+    //setPage(Math.max(page - 1, 0));
   };
 
   const handleNextPage = () => {
@@ -79,11 +81,6 @@ export const BusRouteFilter = () => {
   const handleDistanceChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setDistance(event.target.value);
   };
-
-  // const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-  //   event.preventDefault();
-  //   setDistance(distance);
-  // };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -123,13 +120,12 @@ export const BusRouteFilter = () => {
           >
             Previous Page
           </Button>
-          {/* <Button sx={{ color: "black" }} onClick={handleNextPage}>
-            Next Page
-          </Button> */}
+      
           <Button
             sx={{ color: "black" }}
             onClick={handleNextPage}
-            disabled={!canNextPage}
+            // disabled={!canNextPage}  Call la next page... existA?
+            disabled={busroutes.length < size}
           >
             Next Page
           </Button>

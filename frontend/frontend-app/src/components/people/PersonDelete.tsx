@@ -8,30 +8,31 @@ import { BACKEND_API_URL } from "../../constants";
 
 
 
-export const BusRouteDelete = () => {
-	const { busRouteId } = useParams();
+export const PersonDelete = () => {
+	const { personId } = useParams();
 	const navigate = useNavigate();
 
 	const handleDelete = async (event: { preventDefault: () => void }) => {
 		event.preventDefault();
-		await axios.delete(`${BACKEND_API_URL}/busroutes/${busRouteId}`);
-		// go to busroutes list
-		navigate("/busroutes");
+		await axios.delete(`${BACKEND_API_URL}/people/${personId}`);
+
+		navigate("/people");
 	};
 
 	const handleCancel = (event: { preventDefault: () => void }) => {
 		event.preventDefault();
-		navigate("/busroutes");
+		// go to people list
+		navigate("/people");
 	};
 
 	return (
 		<Container>
 			<Card>
 				<CardContent>
-					<IconButton component={Link} sx={{ mr: 3 }} to={`/busroutes`}>
+					<IconButton component={Link} sx={{ mr: 3 }} to={`/people`}>
 						<ArrowBackIcon />
 					</IconButton>{" "}
-					Are you sure you want to delete this busRoute? This cannot be undone!
+					Are you sure you want to delete this person? This cannot be undone!
 				</CardContent>
 				<CardActions>
 					<Button onClick={handleDelete}>Delete it</Button>

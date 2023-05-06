@@ -7,8 +7,9 @@ export interface BusRoute{
     departure_hour: string,
     arrival_hour: string,
     distance: string
+    noOfTicketsOfBusRouteId: number  //DTO
     people: Person[]
-
+    
 }
 
 

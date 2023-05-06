@@ -1,3 +1,4 @@
+import { Person } from "./Person";
 
 export interface Luggage{
     id: number,
@@ -6,6 +7,8 @@ export interface Luggage{
     color: string,
     priority: string,
     status: string,
-    //personId: number
+    description: string,
+    personId: number,
+    person?: Person
 
 }
