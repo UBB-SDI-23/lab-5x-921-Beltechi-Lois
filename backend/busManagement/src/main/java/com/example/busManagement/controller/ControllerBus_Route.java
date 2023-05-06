@@ -1,10 +1,7 @@
 package com.example.busManagement.controller;
 
 import com.example.busManagement.domain.*;
-import com.example.busManagement.domain.DTO.BusRouteDTOwithTicketsFK;
-import com.example.busManagement.domain.DTO.BusRoutesAveragePeopleDTO;
-import com.example.busManagement.domain.DTO.Bus_RouteDTO;
-import com.example.busManagement.domain.DTO.Bus_Route_PeopleDTO;
+import com.example.busManagement.domain.DTO.*;
 import com.example.busManagement.service.ServiceBus_Route;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.PageRequest;
@@ -29,29 +26,38 @@ class ControllerBus_Route {
 
 
     //GETALL fara tickets ; no People information ok,No_Of_People_Transported
-    @GetMapping("/busroutes/page/{page}/size/{size}")
+    @GetMapping("/api/busroutes/page/{page}/size/{size}")
     @CrossOrigin(origins = "*")
-    List<Bus_RouteDTO> all(@PathVariable int page, @PathVariable int size) {
+    List<Bus_RouteAllTicketsDTO> all(@PathVariable int page, @PathVariable int size) {
         PageRequest pr = PageRequest.of(page,size);
         return busRouteService.getAllbusroutes(pr);
     }
 
     //GET BY ID, fara TICKETS; cu Person & SeatNumber with Date
-    @GetMapping("/busroutes/{id}")
+    @GetMapping("/api/busroutes/{id}")
     @CrossOrigin(origins = "*")
     BusRouteDTOwithTicketsFK one(@PathVariable String id) {
 
         return busRouteService.getByIdbusroutes(id);
     }
 
-    @GetMapping("/busroutes/count")
+    @GetMapping("/api/busroutes/count")
     @CrossOrigin(origins = "*")
     long count() {
         return busRouteService.getCount();
     }
 
+
+    @GetMapping("/api/busroutes/autocomplete")
+    public List<Bus_Route> getBusRoutesSuggestions(@RequestParam String query)
+    {
+        return this.busRouteService.getBusRoutesIdsAutocomplete(query);
+    }
+
+
+
     // A2 FILTER
-    @GetMapping("/busroutes/higherThanGivenDistance/{value}/page/{page}/size/{size}")
+    @GetMapping("/api/busroutes/higherThanGivenDistance/{value}/page/{page}/size/{size}")
     @CrossOrigin(origins = "*")
     public List<Bus_Route> higherThan(@PathVariable String value,@PathVariable int page, @PathVariable int size) {
         PageRequest pr = PageRequest.of(page,size);
@@ -59,18 +65,18 @@ class ControllerBus_Route {
     }
 
 
-    @PostMapping("/busroutes")   // ADD
+    @PostMapping("/api/busroutes")   // ADD
     Bus_Route newBusRoute(@Valid @RequestBody Bus_Route newBusRoute) {
         return busRouteService.addBusRoute(newBusRoute);
     }
 
-    @PutMapping("/busroutes/{id}")   //UPDATE
+    @PutMapping("/api/busroutes/{id}")   //UPDATE
     Bus_Route replaceBusRoute(@Valid @RequestBody Bus_Route newBus_Route, @PathVariable Long id) {
 
         return busRouteService.updateBusRoute(newBus_Route, id);
     }
 
-    @DeleteMapping("/busroutes/{id}")   //DELETE
+    @DeleteMapping("/api/busroutes/{id}")   //DELETE
     void deleteBusRoute(@PathVariable Long id) {
 
         busRouteService.deleteBusRoute(id);

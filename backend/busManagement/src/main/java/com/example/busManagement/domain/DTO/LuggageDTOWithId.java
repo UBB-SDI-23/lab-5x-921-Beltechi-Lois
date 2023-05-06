@@ -17,6 +17,8 @@ public class LuggageDTOWithId {
     private String color;
     private String priority;
     private String status;
+
+    private String description;
     Integer person_Id;
 
 }

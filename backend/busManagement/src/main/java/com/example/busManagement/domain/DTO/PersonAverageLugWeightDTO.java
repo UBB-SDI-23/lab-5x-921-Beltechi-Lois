@@ -9,12 +9,9 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class PersonAverageDistanceDTO {
-
+public class PersonAverageLugWeightDTO {
     private long personId;
     private String firstName;
     private String lastName;
-    private int averageDistance;
-
-
+    private int averageWeight;
 }

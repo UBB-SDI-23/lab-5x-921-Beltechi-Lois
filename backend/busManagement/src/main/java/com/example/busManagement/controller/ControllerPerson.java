@@ -1,10 +1,10 @@
 package com.example.busManagement.controller;
 
 import com.example.busManagement.domain.*;
-import com.example.busManagement.domain.DTO.PersonAverageDistanceDTO;
-import com.example.busManagement.domain.DTO.PersonDTOWith_noBusTaken;
-import com.example.busManagement.domain.DTO.PersonDTO_getById_LuggageBusRoutes;
+import com.example.busManagement.domain.DTO.*;
 import com.example.busManagement.service.ServicePerson;
+import jakarta.validation.Valid;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -24,46 +24,59 @@ class ControllerPerson {
 
 
     //GETALL without Tickets, with ID Passenger 1:1, No_Of_BusRoutesTaken for each Person
-    @GetMapping("/people")
+    @GetMapping("/api/people/page/{page}/size/{size}")
     @CrossOrigin(origins = "*")
-    List<PersonDTOWith_noBusTaken> all() {
-        return ControllerPerson.getAllPeople();
+    List<PersonAllLuggagesDTO> all(@PathVariable int page, @PathVariable int size) {
+
+        PageRequest pr = PageRequest.of(page,size);
+        return ControllerPerson.getAllPeople(pr);
     }
 
 
 
 
-    @GetMapping("/people/{id}")
+    @GetMapping("/api/people/{id}")
     @CrossOrigin(origins = "*")
-    public PersonDTO_getById_LuggageBusRoutes one(@PathVariable Long id) {
+    public PersonDTO_getById_Luggage one(@PathVariable String id) {
 
        return ControllerPerson.getByIdPerson(id);
     }
 
 
     // A3 statistic
-    @GetMapping("/people/average-distance-of-bus-routes")
+    @GetMapping("/api/people/average-distance-of-luggage-weight/page/{page}/size/{size}")
     @CrossOrigin(origins = "*")
-    public List<PersonAverageDistanceDTO> getPeopleOrderedByAverageDistanceOfBusRoutes() {
-        return ControllerPerson.getPeopleOrderedByAverageDistanceOfBusRoutes();
+    public List<PersonAverageLugWeightDTO> getPeopleOrderedByAverageWeightOfLuggages(@PathVariable int page, @PathVariable int size) {
+        PageRequest pr = PageRequest.of(page,size);
+        return ControllerPerson.getPeopleOrderedByAverageWeightOfLuggages(pr);
     }
 
 
+    @GetMapping("/api/people/count")
+    @CrossOrigin(origins = "*")
+    long count() {
+        return ControllerPerson.getCount();
+    }
 
-    @PostMapping("/people")
-    public Person newPerson(@RequestBody Person newPerson) {
+    @GetMapping("/api/people/autocomplete")
+    public List<Person> getPeopleSuggestions(@RequestParam String query)
+    {
+        return this.ControllerPerson.getPeopleIdsAutocomplete(query);
+    }
+
+    @PostMapping("/api/people")
+    public Person newPerson(@Valid @RequestBody Person newPerson) {
        return ControllerPerson.addPerson(newPerson);
     }
 
-
-    @PutMapping("/people/{personID}")     //UPDATE
-    Person replacePerson(@RequestBody Person person, @PathVariable Long personID)
+    @PutMapping("/api/people/{personID}")     //UPDATE
+    Person replacePerson(@Valid @RequestBody Person person, @PathVariable Long personID)
     {
        return ControllerPerson.updatePerson(person,personID);
 
     }
 
-    @DeleteMapping("/people/{id}")  //DELETE
+    @DeleteMapping("/api/people/{id}")  //DELETE
     void deletePerson(@PathVariable Long id) {
         ControllerPerson.deletePerson(id);
     }

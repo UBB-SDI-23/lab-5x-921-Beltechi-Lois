@@ -26,14 +26,82 @@ public class ServiceBus_Route {
         this.ticket_repository = ticket_repository;
     }
 
-    public List<Bus_RouteDTO> getAllbusroutes(PageRequest pr) {
-        //Pageable pageable = PageRequest.of(0, 50);
-        //Page<Bus_Route> busRoutePage = busroute_repository.findAll(pageable);
-        Page<Bus_Route> busRoutePage = busroute_repository.findAll(pr);
+    public List<Bus_RouteAllTicketsDTO> getAllbusroutes(PageRequest pr) {
+        // Initial, fara aggregated value
+//        Page<Bus_Route> busRoutePage = busroute_repository.findAll(pr);
+//        ModelMapper modelMapper = new ModelMapper();
+//        return busRoutePage.stream()
+//                .map(busRoute -> modelMapper.map(busRoute, Bus_RouteDTO.class))
+//                .collect(Collectors.toList());
+
+        //Method 1 Aggregate
+//        Page<Bus_Route> busRoutePage = busroute_repository.findAll(pr);
+//        ModelMapper modelMapper = new ModelMapper();
+//        return busRoutePage.stream()
+//                .map(busRoute -> {
+//                    Bus_RouteAllTicketsDTO dto = modelMapper.map(busRoute, Bus_RouteAllTicketsDTO.class);
+//                    int count = busroute_repository.countTicketsByBusRouteId(busRoute.getId()); // add this line
+////                    dto.setNoOfTicketsOfBusRouteId(busRoute.getTickets().size());
+//                    dto.setNoOfTicketsOfBusRouteId(count);
+//
+//
+//                    return dto;
+//                })
+//                .collect(Collectors.toList());
+
+
+
+        // Method1
+
+        //Sort sort = Sort.by("tickets.id").ascending();
+//        Page<Bus_Route> busRoutePage = busroute_repository.findAll(pr);
+//        ModelMapper modelMapper = new ModelMapper();
+//        return busRoutePage.stream()
+//                .map(busRoute -> {
+//                    Bus_RouteAllTicketsDTO dto = modelMapper.map(busRoute, Bus_RouteAllTicketsDTO.class);
+//                    //dto.setNoOfTicketsOfBusRouteId(busRoute.getTickets().size());
+//                    dto.setNoOfTicketsOfBusRouteId(busroute_repository.countTicketsByBusRouteId(busRoute.getId()));
+//                    return dto;
+//                })
+//                .collect(Collectors.toList());
+
+        // Method 1.2
         ModelMapper modelMapper = new ModelMapper();
-        return busRoutePage.stream()
-                .map(busRoute -> modelMapper.map(busRoute, Bus_RouteDTO.class))
-                .collect(Collectors.toList());
+        List<Bus_RouteAllTicketsDTO> busrouteDTOs = new ArrayList<>();
+        for (Bus_Route busRoute : busroute_repository.findAll(pr)) {
+            Bus_RouteAllTicketsDTO dto = modelMapper.map(busRoute, Bus_RouteAllTicketsDTO.class);
+            //int ticketCount = ticket_repository.countTicketsByBusRouteId(busroute.getBus_route().getId());
+            //dto.setNoOfTicketsOfBusRouteId(ticketCount);
+            dto.setNoOfTicketsOfBusRouteId(busroute_repository.countTicketsByBusRouteId(busRoute.getId()));
+            busrouteDTOs.add(dto);
+        }
+
+        return busrouteDTOs;
+
+        //Method2
+//        List<Object[]> results = busroute_repository.countTicketsByBusRouteIdUsingJoin(pr.getOffset(), pr.getPageSize());
+//
+//        List<Bus_RouteAllTicketsDTO> dtos = new ArrayList<>();
+//        for (Object[] result : results) {
+//            Bus_Route busRoute = (Bus_Route) result[0];
+//            int count = (int) result[1];
+//
+//            Bus_RouteAllTicketsDTO dto = new Bus_RouteAllTicketsDTO();
+//            dto.setId(busRoute.getId());
+//            dto.setDeparture_hour(busRoute.getDeparture_hour());
+//            dto.setArrival_hour(busRoute.getArrival_hour());
+//            dto.setBus_name(busRoute.getBus_name());
+//            dto.setDistance(busRoute.getDistance());
+//            dto.setRoute_type(busRoute.getRoute_type());
+//            dto.setNoOfTicketsOfBusRouteId(count);
+//
+//            dtos.add(dto);
+//        }
+//
+//        return dtos;
+
+
+
     }
 
 
@@ -110,11 +178,13 @@ public class ServiceBus_Route {
 
         ModelMapper modelMapper = new ModelMapper();
 
-        Bus_Route busRoute = busroute_repository.findById(busrouteId)
+        Bus_Route busRoute = busroute_repository.findById(busrouteId)  //**
                 .orElseThrow(() -> new BusRouteNotFoundException(busrouteId));
 
         List<PersonWithTicketDTO> peopleWithTickets = new ArrayList<>();
-        List<Ticket> tickets = busRoute.getTickets();
+        //List<Ticket> tickets = busRoute.getTickets(); //**
+        // Fetch tickets for the given bus route id using a custom query
+        List<Ticket> tickets = ticket_repository.findByBusRouteId(busrouteId);
 
         if (tickets != null) {
             for (Ticket ticket : tickets) {
@@ -126,8 +196,10 @@ public class ServiceBus_Route {
                 personWithTicketDTO.setNationality(person.getNationality());
                 personWithTicketDTO.setGender(person.getGender());
                 personWithTicketDTO.setPhoneNumber(person.getPhoneNumber());
+
                 personWithTicketDTO.setSeatNumber(ticket.getSeat_number());
                 personWithTicketDTO.setPayment_method(ticket.getPayment_method());
+
                 peopleWithTickets.add(personWithTicketDTO);
             }
         }
@@ -145,10 +217,23 @@ public class ServiceBus_Route {
 //                .filter(bus_route -> Integer.parseInt(bus_route.getDistance()) > Integer.parseInt(value))
 //                .collect(Collectors.toList());
 
-        return busroute_repository.findAll(pr)
-                .stream()
-                .filter(bus_route -> Integer.parseInt(bus_route.getDistance()) > Integer.parseInt(value))
-                .collect(Collectors.toList());
+//        return busroute_repository.findAll(pr)
+//                .stream()
+//                .filter(bus_route -> Integer.parseInt(bus_route.getDistance()) > Integer.parseInt(value))
+//                .collect(Collectors.toList());
+
+        //List<Bus_Route> allBusRoutes = busroute_repository.findAll(pr).getContent(); // A list
+
+        //PageRequest pageRequest = PageRequest.of(pageNumber, pageSize);
+
+
+        return busroute_repository.findByDistanceGreaterThan(Integer.parseInt(value), pr);
+
+//        // Filter the original list of bus routes based on the filtered list
+//        return allBusRoutes.stream()
+//                .filter(filteredBusRoutes::contains)
+//                .collect(Collectors.toList());
+
     }
 
     public Bus_Route addBusRoute(Bus_Route newBusRoute) {
@@ -183,7 +268,22 @@ public class ServiceBus_Route {
 
     }
 
+    public List<Bus_Route> getBusRoutesIdsAutocomplete(String query) {
+        PageRequest pr = PageRequest.of(0,500);
+
+        Page<Bus_Route> busroutes = busroute_repository.findAll(pr);
+
+        return busroutes.stream()
+//                .filter(person -> String.valueOf(person.getId()).startsWith(query))
+                .filter(busroute -> busroute.getBus_name().toLowerCase().contains(query.toLowerCase())).limit(20)
+                .limit(20)
+                .collect(Collectors.toList());
+    }
 
 
-
+//    public long countByDistanceGreaterThan(int distance) {
+//            return busroute_repository.count(
+//                    (root, query, builder) -> builder.greaterThan(root.get("distance"), distance)
+//
+//    }
 }

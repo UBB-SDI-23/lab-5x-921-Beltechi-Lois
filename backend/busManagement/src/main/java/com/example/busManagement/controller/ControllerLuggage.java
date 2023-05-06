@@ -4,9 +4,11 @@ import com.example.busManagement.domain.*;
 import com.example.busManagement.domain.DTO.LuggageDTO;
 import com.example.busManagement.domain.DTO.LuggageDTOWithId;
 import com.example.busManagement.domain.DTO.LuggagePersonDTO;
+import com.example.busManagement.domain.DTO.LuggagePersonNationalityDTO;
 import com.example.busManagement.service.ServiceLuggage;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -27,37 +29,58 @@ public class ControllerLuggage {
 
 
     //GETALL without people, only with PeopleID
-    @GetMapping("/luggages")
+    @GetMapping("/api/luggages/page/{page}/size/{size}")
     @CrossOrigin(origins = "*")
-    List<LuggageDTOWithId> all() {
-
-        return ControllerLuggage.getAllLuggages();
+    List<LuggageDTOWithId> all(@PathVariable int page, @PathVariable int size) {
+        PageRequest pr = PageRequest.of(page,size);
+        return ControllerLuggage.getAllLuggages(pr);
     }
 
     //GET BY ID, cu passengers
-    @GetMapping("/luggages/{id}")
+    @GetMapping("/api/luggages/{id}")
     @CrossOrigin(origins = "*")
-    LuggageDTO one(@PathVariable Long id) {
+    LuggageDTO one(@PathVariable String id) {
         return ControllerLuggage.getByIdLuggage(id);
     }
 
 
-    @PostMapping("/luggages/people/{personID}")   // ADD existing PersonID to a new Luggage
+    //SELECT COUNT(*) FROM person p WHERE p.nationality='American'
+    // A3 statistic #2 requirement
+    @GetMapping("/api/luggages/american-nationality/page/{page}/size/{size}")
+    public List<LuggagePersonNationalityDTO> getAmericanLuggages(@PathVariable int page, @PathVariable int size) {
+        PageRequest pr = PageRequest.of(page,size);
+        return ControllerLuggage.getAmericanLuggages(pr);
+    }
+
+    @GetMapping("/api/luggages/count")
+    @CrossOrigin(origins = "*")
+    long count() {
+        return ControllerLuggage.getCount();
+    }
+
+
+    @PostMapping("/api/luggages/people/{personID}")   // ADD existing PersonID to a new Luggage
     Luggage newLuggage(@Valid @RequestBody Luggage newLuggage,@PathVariable Long personID) {
 
         return ControllerLuggage.addNewLuggage(newLuggage,personID);
     }
 
-
-    @PutMapping("/luggages/{luggageID}/people/{personID}")     //UPDATE
-    Luggage replaceLuggage(@Valid @RequestBody Luggage luggage, @PathVariable Long luggageID, @PathVariable Long personID)
+    @PutMapping("/api/luggages/{luggageID}/person/{personID}")     //UPDATE
+    Luggage replaceLuggage(@Valid @RequestBody Luggage luggage, @PathVariable Long luggageID,@PathVariable Long personID)
     {
         return ControllerLuggage.updateLuggage(luggage,luggageID,personID);
     }
 
 
+//    @PutMapping("/api/luggages/{luggageID}/people/{personID}")     //UPDATE
+//    Luggage replaceLuggage(@Valid @RequestBody Luggage luggage, @PathVariable Long luggageID, @PathVariable Long personID)
+//    {
+//        return ControllerLuggage.updateLuggage(luggage,luggageID,personID);
+//    }
+
+
     // Luggage ID 3 deleted;   Person -> delete this luggage here too (cascading will do this);
-    @DeleteMapping("/luggages/{luggageID}")  //DELETE
+    @DeleteMapping("/api/luggages/{luggageID}")  //DELETE
     void deleteLuggage(@PathVariable Long luggageID)
     {
         ControllerLuggage.deleteLuggage(luggageID);
@@ -77,9 +100,6 @@ public class ControllerLuggage {
         return errors;
     }
 
-    @GetMapping("/luggage/color/blue/people-count")
-    public List<LuggagePersonDTO> getBlueLuggageCount() {
-            return ControllerLuggage.getBlueLuggageCount();
-    }
+
 
 }

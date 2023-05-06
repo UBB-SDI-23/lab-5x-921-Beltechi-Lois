@@ -3,6 +3,7 @@ package com.example.busManagement.service;
 import com.example.busManagement.domain.Bus_Route;
 import com.example.busManagement.domain.DTO.TicketDTO;
 import com.example.busManagement.domain.DTO.TicketDTOWithId;
+import com.example.busManagement.domain.DTO.TicketDTOwithIdCounter;
 import com.example.busManagement.domain.Person;
 import com.example.busManagement.domain.Ticket;
 import com.example.busManagement.exception.TicketNotFoundException;
@@ -10,6 +11,7 @@ import com.example.busManagement.repository.IRepositoryBusRoute;
 import com.example.busManagement.repository.IRepositoryPerson;
 import com.example.busManagement.repository.IRepositoryTicket;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -29,7 +31,8 @@ public class ServiceTicket {
         this.person_repository = person_repository;
     }
 
-    public List<TicketDTOWithId> getAllTickets() {
+    public List<TicketDTOWithId> getAllTickets(PageRequest pr) {
+
         ModelMapper modelMapper= new ModelMapper();
         //Set for each Ticket its own Person's id
         modelMapper.typeMap(Ticket.class, TicketDTOWithId.class)
@@ -38,18 +41,40 @@ public class ServiceTicket {
                 .addMapping(ticket ->
                         ticket.getBus_route().getId(), TicketDTOWithId::setBus_routeId);
 
-        return ticket_repository.findAll().stream()
+        return ticket_repository.findAll(pr).stream()
                 .map(ticket -> modelMapper.map(ticket, TicketDTOWithId.class))
                 .collect(Collectors.toList());
+
+
+        //Meth2 @@
+//        ModelMapper modelMapper = new ModelMapper();
+//        //Set for each Ticket its own Person's id
+//        modelMapper.typeMap(Ticket.class, TicketDTOwithIdCounter.class)
+//                .addMapping(ticket ->
+//                        ticket.getPerson().getId(), TicketDTOwithIdCounter::setPersonId)
+//                .addMapping(ticket ->
+//                        ticket.getBus_route().getId(), TicketDTOwithIdCounter::setBus_routeId);
+//
+//        List<TicketDTOwithIdCounter> ticketDTOs = new ArrayList<>();
+//        for (Ticket ticket : ticket_repository.findAll(pr)) {
+//            TicketDTOwithIdCounter dto = modelMapper.map(ticket, TicketDTOwithIdCounter.class);
+//            int ticketCount = ticket_repository.countTicketsByBusRouteId(ticket.getBus_route().getId());
+//            dto.setNoOfTicketsOfBusRouteId(ticketCount);
+//            ticketDTOs.add(dto);
+//        }
+//
+//        return ticketDTOs;
+
     }
 
-    public TicketDTO getByIdTicket(Long id) {
-        if (ticket_repository.findById(id).isEmpty())
-            throw new TicketNotFoundException(id);
+    public TicketDTO getByIdTicket(String id) {
+        Long ticketId = Long.parseLong(id);
+
+        Ticket ticket = ticket_repository.findById(ticketId)
+                .orElseThrow(() -> new TicketNotFoundException(ticketId));
 
         ModelMapper modelMapper = new ModelMapper();
-        TicketDTO ticketDTO = modelMapper.map(ticket_repository.findById(id).get(), TicketDTO.class);
-        return ticketDTO;
+        return modelMapper.map(ticket, TicketDTO.class);
     }
 
     public Ticket addTicket(Ticket newTicket, Long personID, Long busrouteID) {
@@ -107,5 +132,9 @@ public class ServiceTicket {
 
     public void deleteTicket(Long id) {
         ticket_repository.deleteById(id);
+    }
+
+    public long getCount() {
+        return ticket_repository.count();
     }
 }

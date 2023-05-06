@@ -1,14 +1,18 @@
 package com.example.busManagement.service;
 
+import com.example.busManagement.domain.Bus_Route;
 import com.example.busManagement.domain.DTO.LuggageDTO;
 import com.example.busManagement.domain.DTO.LuggageDTOWithId;
 import com.example.busManagement.domain.DTO.LuggagePersonDTO;
+import com.example.busManagement.domain.DTO.LuggagePersonNationalityDTO;
 import com.example.busManagement.domain.Luggage;
 import com.example.busManagement.domain.Person;
 import com.example.busManagement.exception.LuggageNotFoundException;
 import com.example.busManagement.repository.IRepositoryLuggage;
 import com.example.busManagement.repository.IRepositoryPerson;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -27,7 +31,9 @@ public class ServiceLuggage {
         this.person_repository = person_repository;
     }
 
-    public List<LuggageDTOWithId> getAllLuggages() {
+    public List<LuggageDTOWithId> getAllLuggages(PageRequest pr) {
+
+        //Page<Bus_Route> busRoutePage = busroute_repository.findAll(pr);
 
         ModelMapper modelMapper= new ModelMapper();
 
@@ -36,19 +42,29 @@ public class ServiceLuggage {
                 .addMapping(luggage ->
                         luggage.getPerson().getId(), LuggageDTOWithId::setPerson_Id);
 
-        return luggage_repository.findAll().stream()
+        PageRequest selectedPage = PageRequest.of(pr.getPageNumber(), pr.getPageSize());
+
+        return luggage_repository.findAll(selectedPage).stream()
                 .map(luggage -> modelMapper.map(luggage, LuggageDTOWithId.class))
                 .collect(Collectors.toList());
     }
 
-    public LuggageDTO getByIdLuggage(Long id) {
+    public LuggageDTO getByIdLuggage(String id) {
 
-        if (luggage_repository.findById(id).isEmpty())
-            throw new LuggageNotFoundException(id);
+        Long luggageId = Long.parseLong(id);
 
-        ModelMapper modelMapper = new ModelMapper();
-        LuggageDTO luggageDTO = modelMapper.map(luggage_repository.findById(id).get(), LuggageDTO.class);
-        return luggageDTO;
+//        if (luggage_repository.findById(id).isEmpty())
+//            throw new LuggageNotFoundException(id);
+//
+//        ModelMapper modelMapper = new ModelMapper();
+//        LuggageDTO luggageDTO = modelMapper.map(luggage_repository.findById(id).get(), LuggageDTO.class);
+//        return luggageDTO;
+
+
+        Luggage luggage = luggage_repository.findById(luggageId)
+                .orElseThrow(() -> new LuggageNotFoundException(luggageId));
+
+        return new ModelMapper().map(luggage, LuggageDTO.class);
     }
 
     public Luggage addNewLuggage(Luggage newLuggage, Long personID) {
@@ -59,6 +75,7 @@ public class ServiceLuggage {
 
     public Luggage updateLuggage(Luggage luggage, Long luggageID, Long personID) {
         Person person = person_repository.findById(personID).get();
+
         Luggage foundLuggage = this.luggage_repository.findById(luggageID).get();
 
         foundLuggage.setStatus(luggage.getStatus());
@@ -66,8 +83,9 @@ public class ServiceLuggage {
         foundLuggage.setWeight(luggage.getWeight());
         foundLuggage.setColor(luggage.getColor());
         foundLuggage.setPriority(luggage.getPriority());
+        foundLuggage.setDescription(luggage.getDescription());
 
-        foundLuggage.setPerson(person); //cascade will set for Person too
+        foundLuggage.setPerson(person); //cascade will set for Person too ; I dont think so
         return this.luggage_repository.save(foundLuggage);
     }
 
@@ -76,40 +94,32 @@ public class ServiceLuggage {
     }
 
 
-    // counting the number of blue luggage per person
-    public List<LuggagePersonDTO> getBlueLuggageCount() {
-        List<Luggage> blueLuggageList = luggage_repository.findAll(); // not yet blue
+    public List<LuggagePersonNationalityDTO> getAmericanLuggages(PageRequest pr) {
 
-//        List<Luggage> blueLuggageList=new ArrayList<>();
-//
-//        for(Luggage element: LuggageList){
-//            if(element.getColor()== "Blue"){
-//                blueLuggageList.add(element);
-//            }
-//
-//        }
+        List<LuggagePersonNationalityDTO> americanLuggages = new ArrayList<>();
 
-        Map<Long, Integer> luggageCountMap = new HashMap<>();
-        for (Luggage luggage : blueLuggageList) {
-            if(luggage.getColor()=="Blue") {
-                long personId = luggage.getPerson().getId();
-                luggageCountMap.put(personId, luggageCountMap.getOrDefault(personId, 0) + 1);
+        // Get all people and their luggages
+        Page<Person> people = person_repository.findAll(pr);
+        for (Person person : people) {
+            if (person.getNationality().equals("American")) {
+//                List<Luggage> luggages = person.getLuggage();  //Query **
+                List<Luggage> luggages = luggage_repository.findLuggagesByPersonId(person.getId());
+                for (Luggage luggage : luggages) {
+                    LuggagePersonNationalityDTO dto = new LuggagePersonNationalityDTO();
+                    dto.setLuggage_id(luggage.getId());
+                    dto.setWeight(luggage.getWeight());
+                    dto.setPriority(luggage.getPriority());
+                    dto.setStatus(luggage.getStatus());
+                    dto.setPerson_nationality(person.getNationality());
+                    americanLuggages.add(dto);
+                }
             }
         }
 
-        List<LuggagePersonDTO> result = new ArrayList<>();
-        ModelMapper modelMapper = new ModelMapper();
-        for (Map.Entry<Long, Integer> entry : luggageCountMap.entrySet()) {
-            Person person = person_repository.findById(entry.getKey()).orElse(null);
-            if (person != null) {
-                LuggagePersonDTO dto = modelMapper.map(person, LuggagePersonDTO.class);
-                dto.setLuggage_id(blueLuggageList.get(0).getId());
-                dto.setColor("Blue");
-                dto.setNoOfPeople(entry.getValue());
-                result.add(dto);
-            }
-        }
+        return americanLuggages;
+    }
 
-        return result;
+    public long getCount() {
+        return luggage_repository.count();
     }
 }

@@ -9,16 +9,11 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class LuggageDTO {
+public class LuggagePersonNationalityDTO {
 
-    private long id;
-    private String type;
+    private long luggage_id;
     private int weight;
-    private String color;
     private String priority;
     private String status;
-    private String description;
-    private PersonDTO person;
-
+    private String person_nationality;
 }
-

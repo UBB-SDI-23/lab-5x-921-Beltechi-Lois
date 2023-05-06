@@ -2,6 +2,8 @@ package com.example.busManagement.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -27,10 +29,19 @@ public class Person{
     @OneToMany(mappedBy = "person", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonIgnore
     List<Luggage> luggage;
+
+    @NotBlank(message = "FirstName field is mandatory")
     private  String firstName;
+
+    @NotBlank(message = "LastName field is mandatory")
     private  String lastName;
+
+    @NotBlank(message = "Nationality field is mandatory")
     private  String nationality;
+
+    @NotBlank(message = "Gender field is mandatory")
     private  String gender;
+    @Size(min=10, max=10)
     private  String phoneNumber;
 
     public Person(String firstName, String lastName, String nationality, String gender, String phoneNumber) {

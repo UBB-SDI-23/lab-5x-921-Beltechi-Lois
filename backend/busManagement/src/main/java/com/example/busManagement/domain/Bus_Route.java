@@ -3,6 +3,8 @@ package com.example.busManagement.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -27,13 +29,19 @@ public class Bus_Route {
     @JsonIgnore
     List<Ticket> tickets;
 
+    @NotBlank(message = "Bus_Name field is mandatory")
     private  String bus_name;
-    private  String route_type;
-    @NotBlank(message = "Departure hour field is mandatory")
-    private  String departure_hour;
 
-    @NotBlank(message = "Arrival field is mandatory")
-    private  String arrival_hour;
+    @NotBlank(message = "Route type field is mandatory")
+    private  String route_type;
+
+    @Pattern(regexp = "^([01]\\d|2[0-3]):([0-5]\\d)$", message = "Invalid hour format. Please use HH:MM.")
+    private String departure_hour;
+
+    @Pattern(regexp = "^([01]\\d|2[0-3]):([0-5]\\d)$", message = "Invalid hour format. Please use HH:MM.")
+    private String arrival_hour;
+
+    @NotBlank(message = "Distance field is mandatory")
     private  String distance;
 
 

@@ -209,7 +209,7 @@ class Assignment4ApplicationTests {
         ticket_repository.save(ticket2);
 
 
-        when(person_controller.getPeopleOrderedByAverageDistanceOfBusRoutes()).thenReturn(
+        when(person_controller.getPeopleOrderedByAverageDistanceOfBusRoutes(0,2)).thenReturn(
                 Stream.of(new PersonAverageDistanceDTO(
                                 1,"Alina","Bucur",10),
                         new PersonAverageDistanceDTO(
