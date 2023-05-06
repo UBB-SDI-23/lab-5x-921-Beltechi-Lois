@@ -5,6 +5,7 @@ import com.example.busManagement.controller.ControllerBus_Route;
 import com.example.busManagement.controller.ControllerPerson;
 import com.example.busManagement.domain.*;
 import com.example.busManagement.domain.DTO.PersonAverageDistanceDTO;
+import com.example.busManagement.domain.DTO.PersonAverageLugWeightDTO;
 import com.example.busManagement.repository.*;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
@@ -45,6 +46,9 @@ class Assignment4ApplicationTests {
     private IRepositoryBusRoute bus_repository;
     @MockBean
     private IRepositoryTicket ticket_repository;
+
+    @MockBean
+    private IRepositoryLuggage luggage_repository;
     @Autowired
     private WebApplicationContext webApplicationContext;
 
@@ -150,6 +154,17 @@ class Assignment4ApplicationTests {
         person2.setPhoneNumber("0743591501");
         person2.setId(2L);
 
+        Luggage luggage1 = new Luggage();
+        luggage1.setPerson(person1);
+        luggage1.setWeight(10);
+
+
+        Luggage luggage2 = new Luggage();
+        luggage2.setPerson(person2);
+        luggage2.setWeight(102);
+
+
+
 
         Bus_Route bus1 = new Bus_Route();
         bus1.setBus_name("Red Express");
@@ -203,18 +218,22 @@ class Assignment4ApplicationTests {
 
         person_repository.save(person1);
         person_repository.save(person2);
+
+        luggage_repository.save(luggage1);
+        luggage_repository.save(luggage2);
+
         bus_repository.save(bus1);
         bus_repository.save(bus2);
         ticket_repository.save(ticket1);
         ticket_repository.save(ticket2);
 
 
-        when(person_controller.getPeopleOrderedByAverageDistanceOfBusRoutes(0,2)).thenReturn(
-                Stream.of(new PersonAverageDistanceDTO(
-                                1,"Alina","Bucur",10),
-                        new PersonAverageDistanceDTO(
-                                2,"Dragos","Popa",102)
-                        ).collect(Collectors.toList()));
+//        when(person_controller.getPeopleOrderedByAverageWeightOfLuggages(0,2)).thenReturn(
+//                Stream.of(new PersonAverageLugWeightDTO(
+//                                1,"Alina","Bucur",10),
+//                        new PersonAverageLugWeightDTO(
+//                                2,"Dragos","Popa",102)
+//                        ).collect(Collectors.toList()));
         System.out.println("Test 1 passed");
     }
 
