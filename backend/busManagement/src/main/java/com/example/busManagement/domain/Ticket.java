@@ -40,7 +40,7 @@ public class Ticket {
     @NotBlank(message = "Payment field is mandatory")
     private  String payment_method;
 
-    @Size(min=3, max=3)
+    @Size(min=1, max=3)
     private  String seat_number;
 
 

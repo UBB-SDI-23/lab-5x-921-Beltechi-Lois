@@ -52,7 +52,7 @@ import "react-toastify/dist/ReactToastify.css";
       } catch (error) {
         if (axios.isAxiosError(error) && error.response?.status === 400) {
           const errorMessage = error.response?.data?.message;
-          toast.error(errorMessage ?? "PaymentMethod field should not be blank || SeatNumber exactly 3 digits");
+          toast.error(errorMessage ?? "PaymentMethod field should not be blank || SeatNumber between [1,3] digits");
         } else {
           toast.error("An error occurred while adding the item!");
         }
