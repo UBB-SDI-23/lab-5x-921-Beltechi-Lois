@@ -31,6 +31,10 @@ import { BACKEND_API_URL } from "../../constants";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 
+import "../../assets/css/pagination.css";
+
+
+
 import {
   Row,
   Col,
@@ -139,14 +143,17 @@ export const LuggageShowAll = () => {
             Showing {startIdx + 1}-{endIdx} of {totalLuggages} luggages
           </div> */}
 
-          <div>
+          <div className="pagination">
             
             {getPageNumbers().map((pageNumber, index) => (
               <button
                 key={index}
-                className={`btn me-2 ${
-                  pageNumber === page ? "btn-primary" : "btn-secondary"
+                className={`page-numbers ${
+                  pageNumber === page ? "active" : ""
                 }`}
+                // className={`btn me-2 ${
+                //   pageNumber === page ? "btn-primary" : "btn-secondary"
+                // }`}
                 onClick={() => handlePageClick(Number(pageNumber))}
                 disabled={pageNumber === "..." || pageNumber === page}
               >

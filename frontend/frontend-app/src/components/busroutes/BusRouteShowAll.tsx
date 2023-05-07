@@ -31,6 +31,8 @@ import { BACKEND_API_URL } from "../../constants";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 
+import "../../assets/css/pagination.css";
+
 import {
   Row,
   Col,
@@ -44,13 +46,15 @@ export const BusRouteShowAll = () => {
   const [loading, setLoading] = useState(false);
   const [busroutes, setBusRoutes] = useState<BusRoute[]>([]);
   const [page, setPage] = useState(0);
-  const [pageSize, setPageSize] = useState(15);   //Items per Page
+  const [pageSize, setPageSize] = useState(15); //Items per Page
 
   const fetchBusRoutes = useCallback(async (page: number, pageSize: number) => {
-    try {  
-      const dataResponse = await axios.get(`${BACKEND_API_URL}/busroutes/page/${page}/size/${pageSize}`);
+    try {
+      const dataResponse = await axios.get(
+        `${BACKEND_API_URL}/busroutes/page/${page}/size/${pageSize}`
+      );
       const data = dataResponse.data;
-  
+
       setBusRoutes(data);
       setLoading(false);
     } catch (error) {
@@ -58,14 +62,17 @@ export const BusRouteShowAll = () => {
       setLoading(false);
     }
   }, []);
-  
+
   useEffect(() => {
-    console.log('useEffect triggered with page:', page, 'and pageSize:', pageSize);
+    console.log(
+      "useEffect triggered with page:",
+      page,
+      "and pageSize:",
+      pageSize
+    );
     setLoading(true);
     fetchBusRoutes(page, pageSize);
   }, [fetchBusRoutes, page, pageSize]);
-
-
 
   const [totalBusRoutes, setTotalBusRoutes] = useState(0);
   useEffect(() => {
@@ -76,8 +83,6 @@ export const BusRouteShowAll = () => {
       })
       .catch((error) => console.log(error));
   }, []);
-
-
 
   const sortBusRoutes = () => {
     const sortedBusRoutes = [...busroutes].sort((a: BusRoute, b: BusRoute) => {
@@ -92,14 +97,10 @@ export const BusRouteShowAll = () => {
     setBusRoutes(sortedBusRoutes);
   };
 
-
   const totalPages = Math.max(1, Math.ceil(totalBusRoutes / pageSize));
-
-
 
   const startIdx = page * pageSize;
   const endIdx = Math.min(startIdx + pageSize, totalBusRoutes);
-
 
   const getPageNumbers = () => {
     const pageNumbers = [];
@@ -127,8 +128,6 @@ export const BusRouteShowAll = () => {
     setPage(pageNumber);
   };
 
-
-
   return (
     <Container>
       <h1>All BusRoutes</h1>
@@ -151,26 +150,31 @@ export const BusRouteShowAll = () => {
             Sort BusRoutes
           </Button>
 
-
           {/* <div>
             Showing {startIdx + 1}-{endIdx} of {totalBusRoutes} busroutes
           </div> */}
 
-          <div>
+          <div className="pagination">
             {getPageNumbers().map((pageNumber, index) => (
               <button
                 key={index}
-                className={`btn me-2 ${
-                  pageNumber === page ? "btn-primary" : "btn-secondary"
+                className={`page-numbers ${
+                  pageNumber === page ? "active" : ""
                 }`}
+                // className={`btn me-2 ${
+                //   pageNumber === page ? "btn-primary" : "btn-secondary"
+                // }`}
                 onClick={() => handlePageClick(Number(pageNumber))}
                 disabled={pageNumber === "..." || pageNumber === page}
               >
-                {pageNumber === "..." ? "..." : typeof pageNumber === "number" ? pageNumber + 1 : ""}
+                {pageNumber === "..."
+                  ? "..."
+                  : typeof pageNumber === "number"
+                  ? pageNumber + 1
+                  : ""}
               </button>
             ))}
           </div>
-          
         </div>
       )}
 
@@ -190,63 +194,66 @@ export const BusRouteShowAll = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {Array.isArray(busroutes) && busroutes.map((busroute, index) => (
-                <TableRow key={busroute.id}>
-                  <TableCell component="th" scope="row">
-                    {index + 1}
-                  </TableCell>
-                  <TableCell component="th" scope="row">
-                    <Link
-                      to={`/busroutes/${busroute.id}/details`}
-                      title="View busRoute details"
-                    >
-                      {busroute.bus_name}
-                    </Link>
-                  </TableCell>
+              {Array.isArray(busroutes) &&
+                busroutes.map((busroute, index) => (
+                  <TableRow key={busroute.id}>
+                    <TableCell component="th" scope="row">
+                      {index + 1}
+                    </TableCell>
+                    <TableCell component="th" scope="row">
+                      <Link
+                        to={`/busroutes/${busroute.id}/details`}
+                        title="View busRoute details"
+                      >
+                        {busroute.bus_name}
+                      </Link>
+                    </TableCell>
 
-                  <TableCell align="right">{busroute.route_type}</TableCell>
-                  <TableCell align="right">{busroute.departure_hour}</TableCell>
-                  <TableCell align="right">{busroute.arrival_hour}</TableCell>
-                  <TableCell align="center">{busroute.distance}</TableCell>
-                  <TableCell align="center">{busroute.noOfTicketsOfBusRouteId}</TableCell>
+                    <TableCell align="right">{busroute.route_type}</TableCell>
+                    <TableCell align="right">
+                      {busroute.departure_hour}
+                    </TableCell>
+                    <TableCell align="right">{busroute.arrival_hour}</TableCell>
+                    <TableCell align="center">{busroute.distance}</TableCell>
+                    <TableCell align="center">
+                      {busroute.noOfTicketsOfBusRouteId}
+                    </TableCell>
 
+                    <TableCell align="right">
+                      <IconButton
+                        component={Link}
+                        sx={{ mr: 3 }}
+                        to={`/busroutes/${busroute.id}/details`}
+                      >
+                        <Tooltip title="View busRoute details" arrow>
+                          <ReadMoreIcon color="primary" />
+                        </Tooltip>
+                      </IconButton>
 
-                  <TableCell align="right">
-                    <IconButton
-                      component={Link}
-                      sx={{ mr: 3 }}
-                      to={`/busroutes/${busroute.id}/details`}
-                    >
-                      <Tooltip title="View busRoute details" arrow>
-                        <ReadMoreIcon color="primary" />
-                      </Tooltip>
-                    </IconButton>
+                      <IconButton
+                        component={Link}
+                        sx={{ mr: 3 }}
+                        to={`/busroutes/${busroute.id}/edit`}
+                        title="Edit busRoute"
+                      >
+                        <EditIcon />
+                      </IconButton>
 
-                    <IconButton
-                      component={Link}
-                      sx={{ mr: 3 }}
-                      to={`/busroutes/${busroute.id}/edit`}
-                      title="Edit busRoute"
-                    >
-                      <EditIcon />
-                    </IconButton>
-
-                    <IconButton
-                      component={Link}
-                      sx={{ mr: 3 }}
-                      to={`/busroutes/${busroute.id}/delete`}
-                      title="Delete busRoute"
-                    >
-                      <DeleteForeverIcon sx={{ color: "red" }} />
-                    </IconButton>
-                  </TableCell>
-                </TableRow>
-              ))}
+                      <IconButton
+                        component={Link}
+                        sx={{ mr: 3 }}
+                        to={`/busroutes/${busroute.id}/delete`}
+                        title="Delete busRoute"
+                      >
+                        <DeleteForeverIcon sx={{ color: "red" }} />
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+                ))}
             </TableBody>
           </Table>
         </TableContainer>
       )}
-
     </Container>
   );
 };

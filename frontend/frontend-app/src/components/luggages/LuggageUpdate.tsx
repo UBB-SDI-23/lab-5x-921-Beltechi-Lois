@@ -35,11 +35,35 @@ export const LuggageUpdate = () => {
   });
 
 
+  //const [personna, setPerson] = useState<Person>();
+
   useEffect(() => {
     const fetchLuggage = async () => {
       const response = await fetch( `${BACKEND_API_URL}/luggages/${luggageId}`);
       const luggage = await response.json();
       setLuggage(luggage);
+
+      
+      //const personidget= luggage.personId;
+      //console.log(personidget);
+      //const personresponse=await fetch( `${BACKEND_API_URL}/people/${personidget}`);
+
+      //const personna = await personresponse.json();
+      //setPerson(personna);
+
+      //console.log(personna);
+
+      
+    //   setLuggage({
+		// 		type: luggage.type,
+    //     weight: luggage.weight,
+    //             color: luggage.color,
+    //             priority: luggage.priority,
+    //             status: luggage.status,
+    //             description: luggage.description,
+    //             personId: luggage.personId,
+		// })
+
       console.log(luggage);
     };
     fetchLuggage();
@@ -188,8 +212,10 @@ export const LuggageUpdate = () => {
               value={luggage.description}
             />
 
+            
             <Autocomplete
               id="person"
+              //value={personna}
               options={people}
               getOptionLabel={(option) =>
                 `${option.firstName}, ${option.lastName}, ${option.phoneNumber}, ${option.nationality}`
@@ -212,8 +238,19 @@ export const LuggageUpdate = () => {
               onChange={(event, value) => {
                 if (value) {
                   setLuggage({ ...luggage, personId: value.id });
+                  
                 }
+                
               }}
+              //value={people.find((person) => person.id === luggage.personId)}
+              //value={people.find((person) => person.id === luggage.personId) ?? {}}
+              //value={people.find((person) => person.id.toString() === luggage.personId.toString())}
+
+              //value={personna?.lastName}
+              //value={personna?.lastName ?? null}
+
+
+              
 
             />
 

@@ -28,6 +28,8 @@ import { BACKEND_API_URL } from "../../constants";
 import axios from "axios";
 import { Ticket } from "../../models/Ticket";
 
+import "../../assets/css/pagination.css";
+
 export const TicketShowAll = () => {
   const [loading, setLoading] = useState(false);
   const [tickets, setTickets] = useState<Ticket[]>([]);
@@ -119,18 +121,20 @@ export const TicketShowAll = () => {
 
       {!loading && (
         <div style={{ display: "flex", alignItems: "center" }}>
-          
           {/* <div>
             Showing {startIdx + 1}-{endIdx} of {totalTickets} tickets
           </div> */}
 
-          <div>
+          <div className="pagination">
             {getPageNumbers().map((pageNumber, index) => (
               <button
                 key={index}
-                className={`btn me-2 ${
-                  pageNumber === page ? "btn-primary" : "btn-secondary"
+                className={`page-numbers ${
+                  pageNumber === page ? "active" : ""
                 }`}
+                // className={`btn me-2 ${
+                //   pageNumber === page ? "btn-primary" : "btn-secondary"
+                // }`}
                 onClick={() => handlePageClick(Number(pageNumber))}
                 disabled={pageNumber === "..." || pageNumber === page}
               >
@@ -141,7 +145,6 @@ export const TicketShowAll = () => {
                   : ""}
               </button>
             ))}
-            
           </div>
         </div>
       )}

@@ -27,6 +27,8 @@ import { BACKEND_API_URL } from "../../constants";
 import axios from "axios";
 import { Person } from "../../models/Person";
 
+import "../../assets/css/pagination.css";
+
 export const PersonShowAll = () => {
   const [loading, setLoading] = useState(false);
   const [people, setPeople] = useState<Person[]>([]);
@@ -122,13 +124,17 @@ export const PersonShowAll = () => {
             Showing {startIdx + 1}-{endIdx} of {totalPeople} people
           </div> */}
 
-          <div>
+<div className="pagination">
+            
             {getPageNumbers().map((pageNumber, index) => (
               <button
                 key={index}
-                className={`btn me-2 ${
-                  pageNumber === page ? "btn-primary" : "btn-secondary"
+                className={`page-numbers ${
+                  pageNumber === page ? "active" : ""
                 }`}
+                // className={`btn me-2 ${
+                //   pageNumber === page ? "btn-primary" : "btn-secondary"
+                // }`}
                 onClick={() => handlePageClick(Number(pageNumber))}
                 disabled={pageNumber === "..." || pageNumber === page}
               >
@@ -139,6 +145,7 @@ export const PersonShowAll = () => {
                   : ""}
               </button>
             ))}
+          
           </div>
         </div>
       )}
