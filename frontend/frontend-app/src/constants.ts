@@ -11,7 +11,9 @@
 // 	process.env.NODE_ENV === "development" ? DEV_BACKEND_API_URL : PROD_BACKEND_API_URL;
 
 
-export const BACKEND_API_URL = "https://sdi-mpp-project.jumpingcrab.com/api";
+//export const BACKEND_API_URL = "https://sdi-mpp-project.jumpingcrab.com/api";
 
 //export const BACKEND_API_URL = "http://localhost:8080/api";
+
+export const BACKEND_API_URL = "https://13.50.224.227/api";
 
