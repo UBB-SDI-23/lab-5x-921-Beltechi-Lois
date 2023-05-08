@@ -58,7 +58,7 @@ import {
       } catch (error) {
         if (axios.isAxiosError(error) && error.response?.status === 400) {
           const errorMessage = error.response?.data?.message;
-          toast.error(errorMessage ?? "Error: fields should not be blank ||  PhoneNumber = 10 digits");
+          toast.error(errorMessage ?? "Error: fields should not be blank ||  PhoneNumber = 10 digits || Nationality [between 3,20] chars");
         } else {
           toast.error("An error occurred while adding the item!");
         }

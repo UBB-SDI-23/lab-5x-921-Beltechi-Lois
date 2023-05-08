@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.Length;
 
 import java.util.List;
 
@@ -37,6 +38,7 @@ public class Person{
     private  String lastName;
 
     @NotBlank(message = "Nationality field is mandatory")
+    @Length(min = 3, max = 20, message = "Nationality must be between {min} and {max} characters long")
     private  String nationality;
 
     @NotBlank(message = "Gender field is mandatory")
