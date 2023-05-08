@@ -144,39 +144,35 @@ export const BusRouteShowAll = () => {
         </div>
       )}
 
-      {!loading && (
-        <div style={{ display: "flex", alignItems: "center" }}>
-          <Button sx={{ color: "black", mr: 3 }} onClick={sortBusRoutes}>
-            Sort BusRoutes
-          </Button>
+{!loading && (
+  <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+  <Button sx={{ color: "black", mb: 3 }} onClick={sortBusRoutes}>
+    Sort BusRoutes
+  </Button>
 
-          {/* <div>
-            Showing {startIdx + 1}-{endIdx} of {totalBusRoutes} busroutes
-          </div> */}
+  <div style={{ display: "flex", justifyContent: "center" }}>
+    <div className="pagination">
+      {getPageNumbers().map((pageNumber, index) => (
+        <button
+          key={index}
+          className={`page-numbers ${
+            pageNumber === page ? "active" : ""
+          }`}
+          onClick={() => handlePageClick(Number(pageNumber))}
+          disabled={pageNumber === "..." || pageNumber === page}
+        >
+          {pageNumber === "..."
+            ? "..."
+            : typeof pageNumber === "number"
+            ? pageNumber + 1
+            : ""}
+        </button>
+      ))}
+    </div>
+  </div>
+</div>
 
-          <div className="pagination">
-            {getPageNumbers().map((pageNumber, index) => (
-              <button
-                key={index}
-                className={`page-numbers ${
-                  pageNumber === page ? "active" : ""
-                }`}
-                // className={`btn me-2 ${
-                //   pageNumber === page ? "btn-primary" : "btn-secondary"
-                // }`}
-                onClick={() => handlePageClick(Number(pageNumber))}
-                disabled={pageNumber === "..." || pageNumber === page}
-              >
-                {pageNumber === "..."
-                  ? "..."
-                  : typeof pageNumber === "number"
-                  ? pageNumber + 1
-                  : ""}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
+)}
 
       {!loading && busroutes.length > 0 && (
         <TableContainer component={Paper}>
